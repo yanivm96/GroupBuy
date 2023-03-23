@@ -33,6 +33,21 @@ def update_user():
     groupbuy_db.User.update_one({"_id": ObjectId(data["user_id"])}, toUpdate)
     return "updated"
 
+@user.route("/login", methods=['POST'])
+def check_user_login():
+    exist = False
+    data = request.get_json()
+    username = data["username"]
+    password = data["password"]
+    
+    user = groupbuy_db.User.find_one({"username": username,
+                                      "password": password})
+    print(user)
+    if user is not None:
+        exist = True
+    
+    return {"UserExist": exist}, 200
+
 
 
 

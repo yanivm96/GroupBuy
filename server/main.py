@@ -10,7 +10,7 @@ import os
 from pymongo import MongoClient
 
 app = Flask(__name__)
-CORS(app)
+cors = CORS(app,supports_credentials=True)
 
 app.register_blueprint(user,url_prefix="/user")
 app.register_blueprint(seller,url_prefix="/seller")
@@ -22,10 +22,11 @@ def handle_exception(e):
     # Handle the exception here
     return "An error occurred: {}".format(str(e)), 500
 
-@app.route("/")
+@app.route("/", methods=["POST"])
 def fuck():
-    print("dadsa")
-    return "hey"
+    print(":sfacvavc")
+    print(request.get_json())
+    return "CSACASCA" ,200
 
 
 if __name__ == '__main__':

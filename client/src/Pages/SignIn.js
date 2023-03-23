@@ -12,8 +12,13 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 function Copyright(props) {
+
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
       {'Copyright © '}
@@ -26,16 +31,40 @@ function Copyright(props) {
   );
 }
 
+axios.defaults.withCredentials = true;
+let axiosConfig = {
+  headers: {
+    credentials: "include",
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+  },
+};
 const theme = createTheme();
 
 export default function SignInSide() {
+  const [errorLogin, setErrorLogin] = React.useState(false);
+
+  const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
+    let url = "http://127.0.0.1:5000/user/login";
     const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
+    const userInput = {
+      username: data.get('username'),
       password: data.get('password'),
-    });
+    };
+    axios.post(url, JSON.stringify(userInput), axiosConfig)
+      .then((res) => {
+        if (res.data["UserExist"] == true) {
+          localStorage.setItem("token", res.data.token);
+          navigate("/");
+          window.location.reload(false);
+        } else {
+          setErrorLogin(true)
+          console.log("error loging");
+        }
+      });
   };
 
   return (
@@ -77,10 +106,10 @@ export default function SignInSide() {
                 margin="normal"
                 required
                 fullWidth
-                id="email"
-                label="Email Address"
-                name="email"
-                autoComplete="email"
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
                 autoFocus
               />
               <TextField
@@ -105,6 +134,10 @@ export default function SignInSide() {
               >
                 Sign In
               </Button>
+              {errorLogin && <Alert variant="filled" severity="error" >
+                <AlertTitle>Error</AlertTitle>
+                incorrect username or password, try again.
+              </Alert>}
               <Grid container>
                 <Grid item xs>
                   <Link href="#" variant="body2">
@@ -112,7 +145,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="#" variant="body2">
+                  <Link href="http://127.0.0.1:3000/SignUp" variant="body2">
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
