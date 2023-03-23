@@ -21,6 +21,7 @@ def delete_user():
 
 @user.route("/create", methods=['POST'])
 def create_user():
+    print(request.get_json())
     groupbuy_db.User.insert_one(request.get_json())
     return "created" ,200
 

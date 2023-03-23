@@ -3,12 +3,15 @@ from user import user
 from seller import seller
 from item import item
 from group import group
+from flask_cors import CORS
 
 from dotenv import load_dotenv, find_dotenv
 import os
 from pymongo import MongoClient
 
 app = Flask(__name__)
+CORS(app)
+
 app.register_blueprint(user,url_prefix="/user")
 app.register_blueprint(seller,url_prefix="/seller")
 app.register_blueprint(item,url_prefix="/item")
@@ -21,12 +24,11 @@ def handle_exception(e):
 
 @app.route("/")
 def fuck():
+    print("dadsa")
     return "hey"
 
 
 if __name__ == '__main__':
-
-
     app.run(debug=True, port=5000)
 
 
