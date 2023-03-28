@@ -19,7 +19,6 @@ app.register_blueprint(group,url_prefix="/group")
 
 @app.errorhandler(Exception)
 def handle_exception(e):
-    # Handle the exception here
     return "An error occurred: {}".format(str(e)), 500
 
 @app.route("/", methods=["POST"])

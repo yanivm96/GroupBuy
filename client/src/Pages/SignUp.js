@@ -43,42 +43,149 @@ let axiosConfig = {
 };
 
 
+
+
 export default function SignUp() {
     const navigate = useNavigate();
     const [checked, setChecked] = React.useState(false);
+    const [firstNameFiled, setCheckedFirstName] = React.useState(false);
+    const [lastNameFiled, setCheckedLastName] = React.useState(false);
+    const [emailFiled, setCheckedEmail] = React.useState(false);
+    const [usernameFiled, setCheckedUsername] = React.useState(false);
+    const [passwordFiled, setCheckedPassword] = React.useState(false);
+
+    const [firstNameError, setFirstNameError] = React.useState(false);
+    const [lastNameError, setLastNameError] = React.useState(false);
+    const [usernameError, setUsernameError] = React.useState(false);
+    const [emailError, setEmailError] = React.useState(false);
+    const [passwordError, setPasswordError] = React.useState(false);
+
+
+
+
+
+    function checkFields() {
+        return (firstNameFiled && lastNameFiled && emailFiled && usernameFiled && passwordFiled);
+    }
+
+    function manageErrors() {
+        if (!firstNameFiled) {
+            setFirstNameError(true)
+            console.log("entered1")
+        }
+        if (!lastNameFiled) {
+            setLastNameError(true)
+            console.log("entered2")
+        }
+        if (!usernameFiled) {
+            setUsernameError(true)
+        }
+        if (!emailFiled) {
+            setEmailError(true)
+        }
+        if (!passwordFiled) {
+            setPasswordError(true)
+        }
+    }
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        let url;
-        const data = new FormData(event.currentTarget);
-        const userInput = {
-            username: data.get('userName'),
-            password: data.get('password'),
-            lname: data.get('lastName'),
-            fname: data.get('firstName'),
-            email: data.get('email'),
-        };
-        if (checked === true) {
-            url = "http://127.0.0.1:5000/seller/create";
+        if (!checkFields()) {
+            manageErrors();
         }
         else {
-            url = "http://127.0.0.1:5000/user/create";
+            let url;
+            const data = new FormData(event.currentTarget);
+            const userInput = {
+                username: data.get('userName'),
+                password: data.get('password'),
+                lname: data.get('lastName'),
+                fname: data.get('firstName'),
+                email: data.get('email'),
+            };
+            if (checked === true) {
+                url = "http://127.0.0.1:5000/seller/create";
+            }
+            else {
+                url = "http://127.0.0.1:5000/user/create";
+            }
+            axios.post(url, JSON.stringify(userInput), axiosConfig)
+                .then((res) => {
+                    if (res.data) {
+                        localStorage.setItem("token", res.data.token);
+                        navigate("/");
+                        window.location.reload(false);
+                    } else {
+                        console.log("error loging");
+                    }
+                });
         }
-        axios.post(url, JSON.stringify(userInput), axiosConfig)
-            .then((res) => {
-                if (res.data) {
-                    localStorage.setItem("token", res.data.token);
-                    navigate("/");
-                    window.location.reload(false);
-                } else {
-                    console.log("error loging");
-                }
-            });
     };
 
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
+
+
+    const handleFirstNameFiledChange = (event) => {
+        setFirstNameError(false)
+        const nameRegex = /^[a-zA-Z]+$/;
+        let fName = event.target.value;
+        if (fName === "" || !nameRegex.test(fName)) {
+            setCheckedFirstName(false);
+        }
+        else {
+            setCheckedFirstName(true);
+        }
+    };
+
+    const handleLastNameFiledChange = (event) => {
+        setLastNameError(false)
+        const nameRegex = /^[a-zA-Z]+$/;
+        let lName = event.target.value;
+        if (lName === "" || !nameRegex.test(lName)) {
+            setCheckedLastName(false);
+        }
+        else {
+            setCheckedLastName(true);
+        }
+    };
+
+    const handleEmailChange = (event) => {
+        setEmailError(false)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let email = event.target.value;
+        if (email === "" || !emailRegex.test(email)) {
+            setCheckedEmail(false);
+        }
+        else {
+            setCheckedEmail(true);
+        }
+    };
+
+    const handlePasswordChange = (event) => {
+        setPasswordError(false)
+        if (event.target.value === "") {
+            setCheckedPassword(false);
+        }
+        else {
+            setCheckedPassword(true);
+        }
+    };
+
+    const handleUsernameChange = (event) => {
+        setUsernameError(false)
+        const usernameRegex = /^[a-zA-Z0-9]+$/;
+        let userName = event.target.value
+        if (userName === "" || !usernameRegex.test(userName)) {
+            setCheckedUsername(false);
+        }
+        else {
+            setCheckedUsername(true);
+        }
+    };
+
+
 
     return (
         <ThemeProvider theme={theme}>
@@ -102,54 +209,65 @@ export default function SignUp() {
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                    required
                                     autoComplete="given-name"
                                     name="firstName"
-                                    required
+                                    error={firstNameError}
                                     fullWidth
                                     id="firstName"
                                     label="First Name"
                                     autoFocus
+                                    onChange={handleFirstNameFiledChange}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
+                                    error={lastNameError}
                                     fullWidth
                                     id="lastName"
                                     label="Last Name"
                                     name="lastName"
                                     autoComplete="family-name"
+                                    onChange={handleLastNameFiledChange}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
+                                    error={usernameError}
                                     required
                                     fullWidth
                                     id="userName"
                                     label="Username"
                                     name="userName"
                                     autoComplete="user-name"
+                                    onChange={handleUsernameChange}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
+                                    error={emailError}
+                                    type="email"
                                     fullWidth
                                     id="email"
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
+                                    onChange={handleEmailChange}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
+                                    error={passwordError}
                                     fullWidth
                                     name="password"
                                     label="Password"
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
+                                    onChange={handlePasswordChange}
                                 />
                             </Grid>
                             <Stack direction="row" spacing={2} alignItems="center" sx={{ marginLeft: 15, marginTop: 3, }}>

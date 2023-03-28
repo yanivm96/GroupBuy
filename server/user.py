@@ -11,6 +11,19 @@ def get_user():
     define_user()
     return "get"
 
+@user.route("/by_id", methods=['POST'])
+def get_user_by_id():
+    data = request.get_json()
+    print(data["id"])
+    user = groupbuy_db.User.find_one({"_id": ObjectId(data["id"])})
+    
+    if user is not None:
+        print(user)        
+        return {"name": (user["fname"] +" " + user["lname"])} , 200
+
+    return {"name": None}, 400
+
+
 
 @user.route("/delete", methods=['DELETE'])
 def delete_user():
@@ -42,11 +55,14 @@ def check_user_login():
     
     user = groupbuy_db.User.find_one({"username": username,
                                       "password": password})
-    print(user)
+    user_id = None
     if user is not None:
+        user_id = str(user["_id"])
         exist = True
     
-    return {"UserExist": exist}, 200
+    print(user_id)
+    return {"UserExist": exist,
+            "id": user_id}, 200
 
 
 

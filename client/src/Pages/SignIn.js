@@ -45,6 +45,7 @@ const theme = createTheme();
 export default function SignInSide() {
   const [errorLogin, setErrorLogin] = React.useState(false);
 
+
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -58,7 +59,8 @@ export default function SignInSide() {
       .then((res) => {
         if (res.data["UserExist"] == true) {
           localStorage.setItem("token", res.data.token);
-          navigate("/");
+          const id = res.data['id']
+          navigate("/", { pathname: "/", state: { id } }); // send the object id of the logged in user 
           window.location.reload(false);
         } else {
           setErrorLogin(true)
@@ -145,7 +147,7 @@ export default function SignInSide() {
                   </Link>
                 </Grid>
                 <Grid item>
-                  <Link href="http://127.0.0.1:3000/SignUp" variant="body2">
+                  <Link href="http://127.0.0.1:3000/SignUp" variant="body2" >
                     {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
