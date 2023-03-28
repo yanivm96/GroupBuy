@@ -14,15 +14,36 @@ def get_user():
 @user.route("/by_id", methods=['POST'])
 def get_user_by_id():
     data = request.get_json()
-    print(data["id"])
     user = groupbuy_db.User.find_one({"_id": ObjectId(data["id"])})
     
     if user is not None:
-        print(user)        
         return {"name": (user["fname"] +" " + user["lname"])} , 200
 
     return {"name": None}, 400
 
+
+@user.route("/check_username_existence", methods=['POST'])
+def check_username():
+    data = request.get_json()
+    user = groupbuy_db.User.find_one({"username": data["username"]})
+    exist = False
+    
+    if user is not None:
+        exist = True
+
+    return {"exist": exist} , 200
+
+@user.route("/check_email_existence", methods=['POST'])
+def check_email():
+    data = request.get_json()
+    user = groupbuy_db.User.find_one({"email": data["email"]})
+    exist = False
+    if user is not None:
+        exist = True
+        
+    print (exist)
+    
+    return {"exist": exist} , 200
 
 
 @user.route("/delete", methods=['DELETE'])

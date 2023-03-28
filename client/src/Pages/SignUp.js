@@ -1,4 +1,7 @@
 import * as React from 'react';
+import { useState } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,8 +19,12 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import AntSwitch from './AntSwitch';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
+
 
 function Copyright(props) {
+
     return (
         <Typography variant="body2" color="text.secondary" align="center" {...props}>
             {'Copyright © '}
@@ -30,8 +37,6 @@ function Copyright(props) {
     );
 }
 
-const theme = createTheme();
-
 axios.defaults.withCredentials = true;
 let axiosConfig = {
     headers: {
@@ -42,150 +47,109 @@ let axiosConfig = {
     },
 };
 
+const theme = createTheme();
 
-
+const validationSchema = Yup.object({
+    fname: Yup.string()
+        .required('First Name is required')
+        .matches(/^[a-zA-Z]+$/, 'First Name must contain only letters'),
+    lname: Yup.string()
+        .required('Last Name is required')
+        .matches(/^[a-zA-Z]+$/, 'Last Name must contain only letters'),
+    email: Yup.string()
+        .required('Email is required')
+        .email('Invalid email format'),
+    username: Yup.string()
+        .required('username is required')
+        .matches(/^[a-zA-Z0-9]+$/, 'username must contain only alphanumeric characters'),
+    password: Yup.string()
+        .required('Password is required'),
+});
 
 export default function SignUp() {
     const navigate = useNavigate();
-    const [checked, setChecked] = React.useState(false);
-    const [firstNameFiled, setCheckedFirstName] = React.useState(false);
-    const [lastNameFiled, setCheckedLastName] = React.useState(false);
-    const [emailFiled, setCheckedEmail] = React.useState(false);
-    const [usernameFiled, setCheckedUsername] = React.useState(false);
-    const [passwordFiled, setCheckedPassword] = React.useState(false);
+    const [checked, setChecked] = useState(false);
+    const [usernameError, setusernameError] = useState(false);
+    const [emailError, setEmailError] = useState(false);
 
-    const [firstNameError, setFirstNameError] = React.useState(false);
-    const [lastNameError, setLastNameError] = React.useState(false);
-    const [usernameError, setUsernameError] = React.useState(false);
-    const [emailError, setEmailError] = React.useState(false);
-    const [passwordError, setPasswordError] = React.useState(false);
+    async function checkusernameExistence(username) {
+        let url = "http://127.0.0.1:5000/user/check_username_existence";
 
-
-
-
-
-    function checkFields() {
-        return (firstNameFiled && lastNameFiled && emailFiled && usernameFiled && passwordFiled);
-    }
-
-    function manageErrors() {
-        if (!firstNameFiled) {
-            setFirstNameError(true)
-            console.log("entered1")
-        }
-        if (!lastNameFiled) {
-            setLastNameError(true)
-            console.log("entered2")
-        }
-        if (!usernameFiled) {
-            setUsernameError(true)
-        }
-        if (!emailFiled) {
-            setEmailError(true)
-        }
-        if (!passwordFiled) {
-            setPasswordError(true)
+        try {
+            const res = await axios.post(url, JSON.stringify({ "username": username }), axiosConfig);
+            if (res.data["exist"] === false) {
+                localStorage.setItem("token", res.data.token);
+                setusernameError(false)
+                return false
+            } else {
+                setusernameError(true)
+                return true
+            }
+        } catch (error) {
+            console.error(error);
+            // handle error
         }
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        if (!checkFields()) {
-            manageErrors();
+    async function checkEmailExistence(email) {
+        let url = "http://127.0.0.1:5000/user/check_email_existence";
+
+        try {
+            const res = await axios.post(url, JSON.stringify({ "email": email }), axiosConfig);
+            if (res.data["exist"] === false) {
+                localStorage.setItem("token", res.data.token);
+                setEmailError(false)
+                return false
+            } else {
+                setEmailError(true)
+                return true
+            }
+        } catch (error) {
+            console.error(error);
+            // handle error
         }
-        else {
+    }
+
+    const formik = useFormik({
+        initialValues: {
+            fname: '',
+            lname: '',
+            email: '',
+            username: '',
+            password: '',
+        },
+        validationSchema: validationSchema,
+        onSubmit: async (values, { setSubmitting, setFieldError }) => {
+            let emailExist = await checkEmailExistence(values.email);
+            let usernameExist = await checkusernameExistence(values.username);
             let url;
-            const data = new FormData(event.currentTarget);
-            const userInput = {
-                username: data.get('userName'),
-                password: data.get('password'),
-                lname: data.get('lastName'),
-                fname: data.get('firstName'),
-                email: data.get('email'),
-            };
-            if (checked === true) {
-                url = "http://127.0.0.1:5000/seller/create";
-            }
-            else {
-                url = "http://127.0.0.1:5000/user/create";
-            }
-            axios.post(url, JSON.stringify(userInput), axiosConfig)
-                .then((res) => {
+            console.log(emailExist, usernameExist)
+            if (!emailExist && !usernameExist) {
+                if (checked === true) {
+                    url = "http://127.0.0.1:5000/seller/create";
+                } else {
+                    url = "http://127.0.0.1:5000/user/create";
+                }
+                try {
+                    const res = await axios.post(url, JSON.stringify(values), axiosConfig);
                     if (res.data) {
                         localStorage.setItem("token", res.data.token);
                         navigate("/");
                         window.location.reload(false);
                     } else {
-                        console.log("error loging");
+                        console.log("error logging");
                     }
-                });
-        }
-    };
+                } catch (error) {
+                    console.error(error);
+                    // handle error
+                }
+            }
+        },
+    });
 
     const handleChange = (event) => {
         setChecked(event.target.checked);
     };
-
-
-    const handleFirstNameFiledChange = (event) => {
-        setFirstNameError(false)
-        const nameRegex = /^[a-zA-Z]+$/;
-        let fName = event.target.value;
-        if (fName === "" || !nameRegex.test(fName)) {
-            setCheckedFirstName(false);
-        }
-        else {
-            setCheckedFirstName(true);
-        }
-    };
-
-    const handleLastNameFiledChange = (event) => {
-        setLastNameError(false)
-        const nameRegex = /^[a-zA-Z]+$/;
-        let lName = event.target.value;
-        if (lName === "" || !nameRegex.test(lName)) {
-            setCheckedLastName(false);
-        }
-        else {
-            setCheckedLastName(true);
-        }
-    };
-
-    const handleEmailChange = (event) => {
-        setEmailError(false)
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        let email = event.target.value;
-        if (email === "" || !emailRegex.test(email)) {
-            setCheckedEmail(false);
-        }
-        else {
-            setCheckedEmail(true);
-        }
-    };
-
-    const handlePasswordChange = (event) => {
-        setPasswordError(false)
-        if (event.target.value === "") {
-            setCheckedPassword(false);
-        }
-        else {
-            setCheckedPassword(true);
-        }
-    };
-
-    const handleUsernameChange = (event) => {
-        setUsernameError(false)
-        const usernameRegex = /^[a-zA-Z0-9]+$/;
-        let userName = event.target.value
-        if (userName === "" || !usernameRegex.test(userName)) {
-            setCheckedUsername(false);
-        }
-        else {
-            setCheckedUsername(true);
-        }
-    };
-
-
 
     return (
         <ThemeProvider theme={theme}>
@@ -205,77 +169,96 @@ export default function SignUp() {
                     <Typography component="h1" variant="h5">
                         Sign up
                     </Typography>
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
+                    <Box component="form" noValidate onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
                         <Grid container spacing={2}>
                             <Grid item xs={12} sm={6}>
                                 <TextField
+                                    autoComplete="fname"
+                                    name="fname"
                                     required
-                                    autoComplete="given-name"
-                                    name="firstName"
-                                    error={firstNameError}
                                     fullWidth
-                                    id="firstName"
+                                    id="fname"
                                     label="First Name"
                                     autoFocus
-                                    onChange={handleFirstNameFiledChange}
+                                    value={formik.values.fname}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.fname && Boolean(formik.errors.fname)}
+                                    helperText={formik.touched.fname && formik.errors.fname}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={6}>
                                 <TextField
                                     required
-                                    error={lastNameError}
                                     fullWidth
-                                    id="lastName"
+                                    id="lname"
                                     label="Last Name"
-                                    name="lastName"
-                                    autoComplete="family-name"
-                                    onChange={handleLastNameFiledChange}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    error={usernameError}
-                                    required
-                                    fullWidth
-                                    id="userName"
-                                    label="Username"
-                                    name="userName"
-                                    autoComplete="user-name"
-                                    onChange={handleUsernameChange}
+                                    name="lname"
+                                    autoComplete="lname"
+                                    value={formik.values.lname}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.lname && Boolean(formik.errors.lname)}
+                                    helperText={formik.touched.lname && formik.errors.lname}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
-                                    error={emailError}
-                                    type="email"
                                     fullWidth
                                     id="email"
                                     label="Email Address"
                                     name="email"
                                     autoComplete="email"
-                                    onChange={handleEmailChange}
+                                    value={formik.values.email}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.email && Boolean(formik.errors.email)}
+                                    helperText={formik.touched.email && formik.errors.email}
                                 />
                             </Grid>
                             <Grid item xs={12}>
                                 <TextField
                                     required
-                                    error={passwordError}
+                                    fullWidth
+                                    id="username"
+                                    label="username"
+                                    name="username"
+                                    autoComplete="username"
+                                    value={formik.values.username}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.username && Boolean(formik.errors.username)}
+                                    helperText={formik.touched.username && formik.errors.username}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
                                     fullWidth
                                     name="password"
                                     label="Password"
                                     type="password"
                                     id="password"
                                     autoComplete="new-password"
-                                    onChange={handlePasswordChange}
+                                    value={formik.values.password}
+                                    onChange={formik.handleChange}
+                                    error={formik.touched.password && Boolean(formik.errors.password)}
+                                    helperText={formik.touched.password && formik.errors.password}
                                 />
                             </Grid>
-                            <Stack direction="row" spacing={2} alignItems="center" sx={{ marginLeft: 15, marginTop: 3, }}>
-                                <Typography>Buyer</Typography>
-                                <AntSwitch onChange={handleChange} inputProps={{ 'aria-label': 'ant design' }} />
-                                <Typography>Seller</Typography>
-                            </Stack>
+                            <Grid item xs={12}>
+                                <Stack direction="row" alignItems="center" justifyContent="center">
+                                    <Typography marginRight={2}> Buyer </Typography>
+                                    <AntSwitch onChange={handleChange} inputProps={{ 'aria-label': 'ant design' }} />
+                                    <Typography marginLeft={2}> Seller</Typography>
+                                </Stack>
+                            </Grid>
                         </Grid>
+                        <div> <p></p></div>
+                        {usernameError && <Alert variant="filled" severity="error" >
+                            username already exist.
+                        </Alert>}
+                        <div> <p></p></div>
+                        {emailError && <Alert variant="filled" severity="error" >
+                            email already exist.
+                        </Alert>}
                         <Button
                             type="submit"
                             fullWidth
@@ -286,15 +269,17 @@ export default function SignUp() {
                         </Button>
                         <Grid container justifyContent="flex-end">
                             <Grid item>
-                                <Link href="http://127.0.0.1:3000/SignIn" variant="body2">
+                                <Link href="#" variant="body2" onClick={() => navigate('/signin')}>
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
                         </Grid>
                     </Box>
                 </Box>
-                <Copyright sx={{ mt: 5 }} />
+                <Box mt={5}>
+                    <Copyright />
+                </Box>
             </Container>
-        </ThemeProvider>
+        </ThemeProvider >
     );
 }
