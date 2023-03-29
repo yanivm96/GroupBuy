@@ -24,6 +24,26 @@ def create_seller():
     groupbuy_db.Seller.insert_one(request.get_json())
     return "created" ,200
 
+@seller.route("/check_username_existence", methods=['POST'])
+def check_username():
+    data = request.get_json()
+    user = groupbuy_db.User.find_one({"username": data["username"]})
+    exist = False
+    
+    if user is not None:
+        exist = True
+
+    return {"exist": exist} , 200
+
+@seller.route("/check_email_existence", methods=['POST'])
+def check_email():
+    data = request.get_json()
+    user = groupbuy_db.Seller.find_one({"email": data["email"]})
+    exist = False
+    if user is not None:
+        exist = True
+        
+    return {"exist": exist} , 200
 
 @seller.route("/update", methods=['PUT'])
 def update_seller():

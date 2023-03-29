@@ -41,8 +41,6 @@ def check_email():
     if user is not None:
         exist = True
         
-    print (exist)
-    
     return {"exist": exist} , 200
 
 

@@ -69,35 +69,52 @@ const validationSchema = Yup.object({
 export default function SignUp() {
     const navigate = useNavigate();
     const [checked, setChecked] = useState(false);
-    const [usernameError, setusernameError] = useState(false);
+    const [usernameError, setUsernameError] = useState(false);
     const [emailError, setEmailError] = useState(false);
 
     async function checkusernameExistence(username) {
-        let url = "http://127.0.0.1:5000/user/check_username_existence";
+        let userUrl = "http://127.0.0.1:5000/user/check_username_existence";
+        let sellerUrl = "http://127.0.0.1:5000/seller/check_username_existence";
 
         try {
-            const res = await axios.post(url, JSON.stringify({ "username": username }), axiosConfig);
-            if (res.data["exist"] === false) {
-                localStorage.setItem("token", res.data.token);
-                setusernameError(false)
+            const userRes = await axios.post(userUrl, JSON.stringify({ "username": username }), axiosConfig);
+            const sellerRes = await axios.post(sellerUrl, JSON.stringify({ "username": username }), axiosConfig);
+            if (userRes.data["exist"] === false && sellerRes.data["exist"] === false) {
+                if(checked)
+                {
+                    localStorage.setItem("token", sellerRes.data.token);
+                }
+                else
+                {
+                    localStorage.setItem("token", userRes.data.token);
+                }
+                setUsernameError(false)
                 return false
             } else {
-                setusernameError(true)
+                setUsernameError(true)
                 return true
             }
         } catch (error) {
             console.error(error);
-            // handle error
         }
     }
 
     async function checkEmailExistence(email) {
-        let url = "http://127.0.0.1:5000/user/check_email_existence";
-
+        let userurl = "http://127.0.0.1:5000/user/check_email_existence";
+        let sellerUrl = "http://127.0.0.1:5000/seller/check_email_existence";
+        
         try {
-            const res = await axios.post(url, JSON.stringify({ "email": email }), axiosConfig);
-            if (res.data["exist"] === false) {
-                localStorage.setItem("token", res.data.token);
+            const userRes = await axios.post(userurl, JSON.stringify({ "email": email }), axiosConfig);
+            const sellerRes = await axios.post(sellerUrl, JSON.stringify({ "email": email }), axiosConfig);
+            if (userRes.data["exist"] === false && sellerRes.data["exist"] === false) {
+                if(checked)
+                {
+                    localStorage.setItem("token", sellerRes.data.token);
+                }
+                else
+                {
+                    localStorage.setItem("token", userRes.data.token);
+                }
                 setEmailError(false)
                 return false
             } else {
@@ -106,7 +123,6 @@ export default function SignUp() {
             }
         } catch (error) {
             console.error(error);
-            // handle error
         }
     }
 
@@ -141,7 +157,6 @@ export default function SignUp() {
                     }
                 } catch (error) {
                     console.error(error);
-                    // handle error
                 }
             }
         },

@@ -18,6 +18,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect } from 'react';
+import { Header } from '../comp/Header';
 
 function Copyright() {
   return (
@@ -47,50 +48,20 @@ const cards = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 const theme = createTheme();
 
 export default function Album() {
-  const [LoggedinPerson, setName] = React.useState("");
-  const location = useLocation();
-  const { state } = location;
-  const id = state;
+  //const [LoggedinPerson, setName] = React.useState("");
+  // const location = useLocation();
+  // const { state } = location;
+  // const id = state;
 
 
-  useEffect(() => {
-    handleLoad();
-  }, []);
 
-  const handleLoad = (event) => {
-    let url = "http://127.0.0.1:5000/user/by_id";
-    axios.post(url, JSON.stringify(id), axiosConfig)
-      .then((res) => {
-        if (res.data["name"] != null) {
-          console.log(res.data["name"])
-          setName(res.data["name"] + " logged in")
-          localStorage.setItem("token", res.data.token);
-        }
-      });
-  }
 
-  const handleLogoutClick = (event) => {
-    setName(null)
-  }
+
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <AppBar position="relative">
-        <Toolbar>
-          <CameraIcon sx={{ mr: 2 }} />
-          <Typography variant="h6" color="inherit" noWrap>
-            <Button variant="contained" disableElevation>
-              <Link color="inherit" href="/SignIn"> Sign In </Link>
-            </Button>
-            <Button variant="contained" disableElevation>
-              <Link color="inherit" href="/SignUp"> Sign Up </Link>
-            </Button>
-            {id !== "" ? <p>{LoggedinPerson}</p> : null}
-            <Button onClick={handleLogoutClick} variant="contained" disableElevation>Log out</Button>
-          </Typography>
-        </Toolbar>
-      </AppBar>
+      
       <main>
         {/* Hero unit */}
         <Box
