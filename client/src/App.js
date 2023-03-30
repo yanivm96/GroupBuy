@@ -26,25 +26,28 @@ function App() {
             Authorization: `Bearer ${token}`,
           },
         })
-        .then((response) => setIsLoggedIn(response.data.exists));
+        .then((response) => {
+          setIsLoggedIn(response.data.exists)
+          setIsSeller(response.data.isSeller)
+    })
     } catch (e) {
-      setIsLoggedIn(false);
-    }
-  };
+    setIsLoggedIn(false);
+  }
+};
 
 
 
 
-  return (
-    <BrowserRouter>
-      <Header isLoggedIn={isLoggedIn}> </Header>
-      <Routes>
-        <Route path="/" element={<Album />} />
-        <Route path="/SignIn" element={<SignIn />} />
-        <Route path="/SignUp" element={<SignUp />} />
-      </Routes>
-    </BrowserRouter>
-  )
+return (
+  <BrowserRouter>
+    <Header isLoggedIn={isLoggedIn} isSeller={isSeller}> </Header>
+    <Routes>
+      <Route path="/" element={<Album />} />
+      <Route path="/SignIn" element={<SignIn />} />
+      <Route path="/SignUp" element={<SignUp />} />
+    </Routes>
+  </BrowserRouter>
+)
 }
 
 export default App;

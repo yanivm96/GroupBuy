@@ -20,11 +20,16 @@ def delete_group():
 
 @group.route("/create", methods=['POST'])
 def create_group():
+    created = False
     data = request.get_json()
-    data["item_id"] = ObjectId(data["item_id"])
-    groupbuy_db.Group.insert_one(request.get_json())
+    data["price"] = float(data["price"])
+    data["amount_of_people"] = int(data["amount_of_people"])
+    group = groupbuy_db.Group.insert_one(request.get_json())
+    
+    if group:
+        created=True
 
-    return "created" ,200
+    return {"itemCreated" :created} ,200
 
 
 @group.route("/update", methods=['PUT'])
@@ -40,11 +45,11 @@ def define_group():
         "$jsonSchema": {
             "bsonType": "object",
             "title": "Group",
-            "required": [ "item_id", "price","amount_of_people"],
+            "required": [ "item_name", "price","amount_of_people", "item_description"],
             "properties": {
-                "item_id": {
-                "bsonType": "objectId",
-                "description": "'item_id' must be a string and is required"
+                "item_name": {
+                "bsonType": "string",
+                "description": "'item_name' must be a string and is required"
                 },
                 "price": {
                 "bsonType": "double",
@@ -52,6 +57,10 @@ def define_group():
                 },
                 "amount_of_people": {
                 "bsonType": "int",
+                "description": "'amount_of_people' must be a string and is required"
+                },
+                "item_description": {
+                "bsonType": "string",
                 "description": "'amount_of_people' must be a string and is required"
                 },
                 "seller_id": {

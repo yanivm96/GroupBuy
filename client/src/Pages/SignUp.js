@@ -150,7 +150,7 @@ export default function SignUp() {
                     const res = await axios.post(url, JSON.stringify(values), axiosConfig);
                     if (res.data) {
                         localStorage.setItem("token", res.data.accessToken);
-                        //navigate("/");
+                        navigate("/");
                         window.location.reload(false);
                     } else {
                         console.log("error logging");
