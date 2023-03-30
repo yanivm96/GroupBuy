@@ -1,10 +1,12 @@
-from flask import Blueprint,request
+import db,os
+from flask import Blueprint,request,current_app,jsonify #current_app = app in blueprint
 from bson.objectid import ObjectId
-import db
-
+from flask_jwt_extended import create_access_token
 
 user = Blueprint("user", __name__)
 groupbuy_db = db.groupBuy_db 
+
+
 
 @user.route("/get", methods=['GET'])
 def get_user():
@@ -54,8 +56,9 @@ def delete_user():
 @user.route("/create", methods=['POST'])
 def create_user():
     print(request.get_json())
-    groupbuy_db.User.insert_one(request.get_json())
-    return "created" ,200
+    user_created = groupbuy_db.User.insert_one(request.get_json())
+    access_token = create_access_token(identity=str(user_created.inserted_id))
+    return {"accessToken": access_token},200
 
 
 @user.route("/update", methods=['PUT'])
@@ -65,23 +68,6 @@ def update_user():
     groupbuy_db.User.update_one({"_id": ObjectId(data["user_id"])}, toUpdate)
     return "updated"
 
-@user.route("/login", methods=['POST'])
-def check_user_login():
-    exist = False
-    data = request.get_json()
-    username = data["username"]
-    password = data["password"]
-    
-    user = groupbuy_db.User.find_one({"username": username,
-                                      "password": password})
-    user_id = None
-    if user is not None:
-        user_id = str(user["_id"])
-        exist = True
-    
-    print(user_id)
-    return {"UserExist": exist,
-            "id": user_id}, 200
 
 
 

@@ -82,11 +82,11 @@ export default function SignUp() {
             if (userRes.data["exist"] === false && sellerRes.data["exist"] === false) {
                 if(checked)
                 {
-                    localStorage.setItem("token", sellerRes.data.token);
+                    localStorage.setItem("token", sellerRes.data.accessToken);
                 }
                 else
                 {
-                    localStorage.setItem("token", userRes.data.token);
+                    localStorage.setItem("token", userRes.data.accessToken);
                 }
                 setUsernameError(false)
                 return false
@@ -149,8 +149,8 @@ export default function SignUp() {
                 try {
                     const res = await axios.post(url, JSON.stringify(values), axiosConfig);
                     if (res.data) {
-                        localStorage.setItem("token", res.data.token);
-                        navigate("/");
+                        localStorage.setItem("token", res.data.accessToken);
+                        //navigate("/");
                         window.location.reload(false);
                     } else {
                         console.log("error logging");

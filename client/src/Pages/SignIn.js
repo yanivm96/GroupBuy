@@ -49,7 +49,7 @@ export default function SignInSide() {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
-    let url = "http://127.0.0.1:5000/user/login";
+    let url = "http://127.0.0.1:5000/login";
     const data = new FormData(event.currentTarget);
     const userInput = {
       username: data.get('username'),
@@ -58,9 +58,9 @@ export default function SignInSide() {
     axios.post(url, JSON.stringify(userInput), axiosConfig)
       .then((res) => {
         if (res.data["UserExist"] == true) {
-          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("token", res.data.accessToken);
           const id = res.data['id']
-          navigate("/", { pathname: "/", state: { id } }); // send the object id of the logged in user 
+          navigate("/"); // send the object id of the logged in user 
           window.location.reload(false);
         } else {
           setErrorLogin(true)

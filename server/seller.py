@@ -1,6 +1,5 @@
 from flask import Blueprint,request
 import db
-from bson.objectid import ObjectId
 
 seller = Blueprint("seller", __name__)
 groupbuy_db = db.groupBuy_db 

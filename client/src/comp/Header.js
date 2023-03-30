@@ -6,8 +6,8 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import axios from 'axios';
-import { useEffect } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+
+import { useNavigate } from 'react-router-dom';
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -19,48 +19,34 @@ let axiosConfig = {
     },
 };
 
-export const Header = () => {
-    const [LoggedinPerson, setName] = React.useState(null);
-    const location = useLocation();
-    const { state } = location;
-    const id = state;
-
-    const handleLogoutClick = (event) => {
-        setName(null)
-    }
-
-    useEffect(() => {
-        handleLoad();
-    }, [LoggedinPerson]);
-
-    const handleLoad = (event) => {
-        let url = "http://127.0.0.1:5000/user/by_id";
-        axios.post(url, JSON.stringify(id), axiosConfig)
+export const Header = (props) => {
+    const navigate = useNavigate();
+    const isLoggedIn = props.isLoggedIn;
+    const handleLogout = (event) => {
+        let url = "http://127.0.0.1:5000/logout";
+        axios.post(url, axiosConfig)
             .then((res) => {
-                if (res.data["name"] != null) {
-                    console.log(res.data["name"])
-                    setName("Welcome " + res.data["name"])
-                    localStorage.setItem("token", res.data.token);
-                }
+                localStorage.clear();
+                navigate("/");
+                window.location.reload(false);
             });
     }
 
-
+    
     return (
         <AppBar position="relative">
             <Toolbar>
                 <Button variant="contained" disableElevation >
                     <Link color="inherit" href="/">Home </Link>
                 </Button>
-                {id !== "" ? <p>{LoggedinPerson}</p> : null}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
-                    {LoggedinPerson === null && <Button variant="contained" disableElevation  >
+                    {!isLoggedIn && <Button variant="contained" disableElevation  >
                         <Link color="inherit" href="/SignIn"> Sign In </Link>
                     </Button>}
-                    {LoggedinPerson === null && <Button variant="contained" disableElevation>
+                    {!isLoggedIn && <Button variant="contained" disableElevation>
                         <Link color="inherit" href="/SignUp"> Sign Up </Link>
                     </Button>}
-                    {LoggedinPerson !== null && <Button onClick={handleLogoutClick} variant="contained" disableElevation>Log out</Button>}
+                    {isLoggedIn && <Button onClick={handleLogout} variant="contained" disableElevation>Log out</Button>}
                 </Typography>
             </Toolbar>
         </AppBar >
