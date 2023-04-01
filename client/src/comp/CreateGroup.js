@@ -17,10 +17,11 @@ const style = {
     p: 4,
   };
   
-  export default function PostItem() {
+  export default function CreateGroupe(props) {
     const [open, setOpen] = React.useState(false);
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
+    const loggedInID = props.loggedInID;
   
     return (
       <div>
@@ -32,7 +33,7 @@ const style = {
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <AddressForm></AddressForm>
+            <AddressForm loggedInID={loggedInID}></AddressForm>
           </Box>
         </Modal>
       </div>

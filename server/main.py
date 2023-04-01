@@ -45,10 +45,10 @@ def check_user_login():
         exist = True
         access_token = create_access_token(identity=user_id)
 
-    print(user_id)
     return {"UserExist": exist,
             "isSeller": is_seller,
-            "accessToken": access_token}, 200
+            "accessToken": access_token,
+            "_id" : user_id}, 200
 
 @app.route("/login", methods=['GET'])
 @jwt_required()
@@ -64,8 +64,7 @@ def token_login():
             is_seller = True
         exists = True
 
-    print(current_user)
-    return {"exists": exists, "isSeller": is_seller}
+    return {"exists": exists, "isSeller": is_seller, "_id" : current_user}
 
 
 @app.route("/logout", methods=["POST"])

@@ -7,8 +7,7 @@ import Link from '@mui/material/Link';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import CreateItem from './CreateGroup';
-import PostItem from './CreateGroup';
+import CreateGroupe from './CreateGroup';
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -24,6 +23,7 @@ export const Header = (props) => {
     const navigate = useNavigate();
     const isLoggedIn = props.isLoggedIn;
     const isSeller = props.isSeller;
+    const loggedInID = props.loggedInID;
     const handleLogout = (event) => {
         let url = "http://127.0.0.1:5000/logout";
         axios.post(url, axiosConfig)
@@ -34,17 +34,17 @@ export const Header = (props) => {
             });
     }
 
-    const handleCreateItem = (event) => { 
-        
-     }
-    
+    const handleCreateItem = (event) => {
+
+    }
+
     return (
         <AppBar position="relative">
             <Toolbar>
                 <Button variant="contained" disableElevation >
                     <Link color="inherit" href="/">Home </Link>
                 </Button>
-                {isLoggedIn && isSeller && <PostItem/>}
+                {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} />}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
                     {!isLoggedIn && <Button variant="contained" disableElevation  >
                         <Link color="inherit" href="/SignIn"> Sign In </Link>

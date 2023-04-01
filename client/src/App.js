@@ -9,7 +9,9 @@ import axios from 'axios';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSeller, setIsSeller] = useState(false)
+  const [isSeller, setIsSeller] = useState(false);
+  const [loggedInID, setloggedInID] = useState("");
+  console.log(isLoggedIn)
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -28,26 +30,30 @@ function App() {
         })
         .then((response) => {
           setIsLoggedIn(response.data.exists)
+          
           setIsSeller(response.data.isSeller)
-    })
+          setloggedInID(response.data._id)
+        })
     } catch (e) {
-    setIsLoggedIn(false);
-  }
-};
+      setIsLoggedIn(false);
+      setloggedInID("");
+      setIsSeller(false);
+    }
+  };
 
 
 
 
-return (
-  <BrowserRouter>
-    <Header isLoggedIn={isLoggedIn} isSeller={isSeller}> </Header>
-    <Routes>
-      <Route path="/" element={<Album />} />
-      <Route path="/SignIn" element={<SignIn />} />
-      <Route path="/SignUp" element={<SignUp />} />
-    </Routes>
-  </BrowserRouter>
-)
+  return (
+    <BrowserRouter>
+      <Header isLoggedIn={isLoggedIn} isSeller={isSeller} loggedInID={loggedInID}> </Header>
+      <Routes>
+        <Route path="/" element={<Album isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID}/>} />
+        <Route path="/SignIn" element={<SignIn />} />
+        <Route path="/SignUp" element={<SignUp />} />
+      </Routes>
+    </BrowserRouter>
+  )
 }
 
 export default App;
