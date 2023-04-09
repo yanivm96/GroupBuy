@@ -24,8 +24,8 @@ let axiosConfig = {
 
 const validationSchema = Yup.object({
   item_name: Yup.string()
-    .required('Required')
-    .matches(/^[a-z A-Z]+$/, 'Should only contain letters'),
+  .trim()
+  .required('Item name is required'),
   price: Yup.string()
     .required('Required')
     .matches(/^\d+(\.\d+)?$/, 'Should be a valid number'),

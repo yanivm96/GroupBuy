@@ -8,6 +8,7 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CreateGroupe from './CreateGroup';
+import ProfileIcon from './ProfileIcon';
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -53,6 +54,7 @@ export const Header = (props) => {
                         <Link color="inherit" href="/SignUp"> Sign Up </Link>
                     </Button>}
                     {isLoggedIn && <Button onClick={handleLogout} variant="contained" disableElevation>Log out</Button>}
+                    <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn}></ProfileIcon>
                 </Typography>
             </Toolbar>
         </AppBar >

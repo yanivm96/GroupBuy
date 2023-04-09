@@ -21,6 +21,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { Header } from '../comp/Header';
 import GroupCard from '../comp/GroupCard';
+import Search from '../comp/Search';
 
 function Copyright() {
   return (
@@ -49,15 +50,28 @@ let axiosConfig = {
 const theme = createTheme();
 
 export default function Album(props) {
-  const [groups, setGroups] = useState([]);
+  const [allGroups, setAllGroups] = useState([]);
+  const [filteredGroups, setFilteredGroups] = useState([]);
+
   const isLoggedIn = props.isLoggedIn;
   const loggedInID = props.loggedInID;
   const isSeller = props.isSeller;
 
+  function handleGroupsFilter(newValue) {
+    if (newValue === "") {
+      setFilteredGroups(allGroups)
+    }
+    else {
+      setFilteredGroups(allGroups.filter(group => group.item_name.toLowerCase().includes(newValue.toLowerCase())));
+    }
+
+  }
+
   useEffect(() => {
     axios.get('http://localhost:5000/group/all')
       .then(response => {
-        setGroups(JSON.parse(response.data));
+        setAllGroups(JSON.parse(response.data));
+        setFilteredGroups(JSON.parse(response.data))
       })
       .catch(error => {
         console.log(error);
@@ -66,41 +80,41 @@ export default function Album(props) {
 
   return (
     <div>
-
       <CssBaseline />
-      <main>
-        <Box
-          sx={{
-            bgcolor: 'background.paper',
-            pt: 8,
-            pb: 6,
-          }}
-        >
-          <Container maxWidth="sm">
 
-          </Container>
-        </Box>
-        <Container sx={{ py: 8 }} maxWidth="md">
-          {/* End hero unit */}
-          <Grid container spacing={4}>
-            {groups.map((group) => (
-              <Grid item key={group} xs={100} sm={10} md={5}>
-                <GroupCard 
-                price={group.price} 
-                amountOfPeople={group.amount_of_people} 
-                itemName={group.item_name} 
+
+      <Box
+        sx={{
+          bgcolor: 'background.paper',
+          pt: 8,
+          pb: 6,
+        }}
+      >
+        <Container maxWidth="sm">
+          <Search onSearch={handleGroupsFilter}></Search>
+
+        </Container>
+      </Box>
+
+      <Container sx={{ py: 8 }} maxWidth="md">
+        <Grid container spacing={4}>
+          {filteredGroups.map((group) => (
+            <Grid item key={group} xs={500} sm={10} md={5}>
+              <GroupCard
+                price={group.price}
+                amountOfPeople={group.amount_of_people}
+                itemName={group.item_name}
                 image={group.image}
                 description={group.item_description}
                 isLoggedIn={isLoggedIn}
                 groupID={group._id.$oid}
                 loggedInID={loggedInID}
                 isSeller={isSeller}>
-                </GroupCard>
-              </Grid>
-            ))}
-          </Grid>
-        </Container>
-      </main>
+              </GroupCard>
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
       <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
         <Typography variant="h6" align="center" gutterBottom>
         </Typography>
