@@ -81,25 +81,22 @@ export default function Album(props) {
   return (
     <div>
       <CssBaseline />
-
-
       <Box
-        sx={{
-          bgcolor: 'background.paper',
-          pt: 8,
-          pb: 6,
-        }}
-      >
-        <Container maxWidth="sm">
-          <Search onSearch={handleGroupsFilter}></Search>
+      sx={{
+        bgcolor: 'background.paper',
+        pt: 8,
+        pb: 6,
+        display: 'flex',
+        justifyContent: 'center' // center the search bar horizontally
+      }}
+    >
+        <Search onSearch={handleGroupsFilter} />
+    </Box>
 
-        </Container>
-      </Box>
-
-      <Container sx={{ py: 8 }} maxWidth="md">
-        <Grid container spacing={4}>
+      <Container sx={{ py: 8 }} maxWidth="xl">
+        <Grid container spacing={10}>
           {filteredGroups.map((group) => (
-            <Grid item key={group} xs={500} sm={10} md={5}>
+            <Grid item key={group} xs={12} sm={6} md={3}>
               <GroupCard
                 price={group.price}
                 amountOfPeople={group.amount_of_people}

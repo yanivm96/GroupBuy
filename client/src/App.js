@@ -5,6 +5,8 @@ import SignUp from "./Pages/SignUp";
 import { Header } from "./comp/Header";
 import { useState, useEffect, } from 'react';
 import axios from 'axios';
+import SellerAccount from "./Pages/SellerAccount"
+import UserAccount from "./Pages/UserAccount"
 
 
 function App() {
@@ -51,6 +53,10 @@ function App() {
         <Route path="/" element={<Album isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID}/>} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/Seller" element={<SellerAccount />} />
+        <Route path="/User" element={<UserAccount />} />
+
+
       </Routes>
     </BrowserRouter>
   )

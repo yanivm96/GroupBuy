@@ -4,6 +4,8 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import AddressForm from './AddressForm';
+import AddCircleIcon from '@mui/icons-material/AddCircle';
+
 
 const style = {
     position: 'absolute',
@@ -25,7 +27,8 @@ const style = {
   
     return (
       <div>
-        <Button onClick={handleOpen} variant="contained" disableElevation>Create new group</Button>
+        <Button onClick={handleOpen} variant="contained" disableElevation>
+          <AddCircleIcon></AddCircleIcon></Button>
         <Modal
           open={open}
           onClose={handleClose}

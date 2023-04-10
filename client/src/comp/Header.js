@@ -9,6 +9,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CreateGroupe from './CreateGroup';
 import ProfileIcon from './ProfileIcon';
+import HomeIcon from '@mui/icons-material/Home';
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -25,35 +26,20 @@ export const Header = (props) => {
     const isLoggedIn = props.isLoggedIn;
     const isSeller = props.isSeller;
     const loggedInID = props.loggedInID;
-    const handleLogout = (event) => {
-        let url = "http://127.0.0.1:5000/logout";
-        axios.post(url, axiosConfig)
-            .then((res) => {
-                localStorage.clear();
-                navigate("/");
-                window.location.reload(false);
-            });
-    }
 
-    const handleCreateItem = (event) => {
-
+    const handleHomeClicked = () =>
+    {
+        navigate('/');
     }
 
     return (
         <AppBar position="relative">
             <Toolbar>
-                <Button variant="contained" disableElevation >
-                    <Link color="inherit" href="/">Home </Link>
+                <Button variant="contained" disableElevation onClick={handleHomeClicked} >
+                    <HomeIcon></HomeIcon>
                 </Button>
                 {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} />}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
-                    {!isLoggedIn && <Button variant="contained" disableElevation  >
-                        <Link color="inherit" href="/SignIn"> Sign In </Link>
-                    </Button>}
-                    {!isLoggedIn && <Button variant="contained" disableElevation>
-                        <Link color="inherit" href="/SignUp"> Sign Up </Link>
-                    </Button>}
-                    {isLoggedIn && <Button onClick={handleLogout} variant="contained" disableElevation>Log out</Button>}
                     <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn}></ProfileIcon>
                 </Typography>
             </Toolbar>

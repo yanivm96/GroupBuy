@@ -9,18 +9,69 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
+import LoginIcon from '@mui/icons-material/Login';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
+
+axios.defaults.withCredentials = true;
+let axiosConfig = {
+  headers: {
+    credentials: "include",
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+  },
+};
 
 export default function ProfileIcon(props) {
+  const navigate = useNavigate();
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleMyAccount = () => {
+    setAnchorEl(null);
+    if (props.isSeller === true) {
+      navigate("/Seller");
+    }
+    else
+    {
+      navigate("/User");
+    }
+  };
+
+  const handleLogout = () => {
+    setAnchorEl(null);
+    let url = "http://127.0.0.1:5000/logout";
+    axios.post(url, axiosConfig)
+      .then((res) => {
+        localStorage.clear();
+        navigate("/");
+        window.location.reload(false);
+      });
+  };
+
+  const handleLogin = () => {
+    setAnchorEl(null);
+    navigate("/SignIn");
+  };
+  const handleSignUp = () => {
+    setAnchorEl(null);
+    navigate("/SignUp");
+
+  };
+
+
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -33,7 +84,7 @@ export default function ProfileIcon(props) {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-            <Avatar sx={{ width: 32, height: 32 }}>M</Avatar>
+            <Avatar sx={{ width: 32, height: 32 }}></Avatar>
           </IconButton>
         </Tooltip>
       </Box>
@@ -72,16 +123,28 @@ export default function ProfileIcon(props) {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
+        {props.isLoggedIn && <MenuItem onClick={handleMyAccount}>
           <Avatar /> My account
-        </MenuItem>
+        </MenuItem>}
         <Divider />
-        <MenuItem onClick={handleClose}>
+        {!props.isLoggedIn && <MenuItem onClick={handleLogin}>
+          <ListItemIcon>
+            <LoginIcon fontSize="small" />
+          </ListItemIcon>
+          Login
+        </MenuItem>}
+        {!props.isLoggedIn && <MenuItem onClick={handleSignUp}>
+          <ListItemIcon>
+            <PersonAdd fontSize="small" />
+          </ListItemIcon>
+          Sign Up
+        </MenuItem>}
+        {props.isLoggedIn && <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <Logout fontSize="small" />
           </ListItemIcon>
           Logout
-        </MenuItem>
+        </MenuItem>}
       </Menu>
     </React.Fragment>
   );

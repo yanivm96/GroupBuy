@@ -28,15 +28,20 @@ app.register_blueprint(group,url_prefix="/group")
 
 @app.route("/login", methods=['POST'])
 def check_user_login():
+    user_id = None
+    access_token = None
     exist = False
     is_seller = False
     data = request.get_json()
     username = data["username"]
     password = data["password"]
+
+
     user = groupBuy_db.User.find_one({"username": username,
                                       "password": password})
     seller = groupBuy_db.Seller.find_one({"username": username,
                                       "password": password})
+
     if user or seller:
         if seller:
             is_seller = True
