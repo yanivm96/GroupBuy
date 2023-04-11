@@ -12,8 +12,9 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import LoginIcon from '@mui/icons-material/Login';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
-import { useNavigate } from 'react-router-dom';
+import { createSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { string } from 'yup';
 
 
 axios.defaults.withCredentials = true;
@@ -40,9 +41,15 @@ export default function ProfileIcon(props) {
   };
 
   const handleMyAccount = () => {
+    console.log(props.loggedInID)
+    const seller_id = props.loggedInID
     setAnchorEl(null);
     if (props.isSeller === true) {
-      navigate("/Seller");
+      navigate('/Seller', { state: { seller_id } });
+    //search: createSearchParams({
+     // seller_id: props.seller_id
+    //})})
+     // navigate("/Seller", {state:{seller}});
     }
     else
     {

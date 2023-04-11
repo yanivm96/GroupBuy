@@ -9,14 +9,14 @@ groupbuy_db = db.groupBuy_db
 @group.route("/get", methods=['GET'])
 def get_group():
     define_group()
-    return "get"
+    return "get" , 200
 
 
-@group.route("/delete", methods=['DELETE'])
+@group.route("/delete", methods=['POST'])
 def delete_group():
     data = request.get_json()
     groupbuy_db.Group.delete_one({"_id": ObjectId(data["group_id"])})
-    return "delete"
+    return "delete" , 200
 
 
 @group.route("/create", methods=['POST'])
@@ -45,6 +45,14 @@ def update_group():
 @group.route("/all", methods=['GET'])
 def get_all_groups():
     groups = groupbuy_db.Group.find({})
+    json_groups = json_util.dumps(groups)
+
+    return jsonify(json_groups), 200
+
+@group.route("/seller_groups", methods=['POST'])
+def get_groups_by_seller_id():
+    data = request.get_json()
+    groups = groupbuy_db.Group.find({"seller_id": ObjectId(data["seller_id"])})
     json_groups = json_util.dumps(groups)
     for group in groups:
         print(group)
@@ -91,7 +99,6 @@ def is_user_like_group():
     user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
                                                    "users": ObjectId(data["userID"])})
     if user_in_group:
-        print("true")
         is_like= True
 
     return {"is_like": is_like}, 200

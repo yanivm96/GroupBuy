@@ -40,7 +40,7 @@ export const Header = (props) => {
                 </Button>
                 {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} />}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
-                    <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn}></ProfileIcon>
+                    <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID}></ProfileIcon>
                 </Typography>
             </Toolbar>
         </AppBar >

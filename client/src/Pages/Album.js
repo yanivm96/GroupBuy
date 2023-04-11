@@ -93,10 +93,10 @@ export default function Album(props) {
         <Search onSearch={handleGroupsFilter} />
     </Box>
 
-      <Container sx={{ py: 8 }} maxWidth="xl">
+      <Container sx={{ py: 7 }} maxWidth="xl">
         <Grid container spacing={10}>
           {filteredGroups.map((group) => (
-            <Grid item key={group} xs={12} sm={6} md={3}>
+            <Grid item key={group} xs={12} sm={5} md={6} lg={3}>
               <GroupCard
                 price={group.price}
                 amountOfPeople={group.amount_of_people}
