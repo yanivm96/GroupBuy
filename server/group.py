@@ -59,6 +59,17 @@ def get_groups_by_seller_id():
 
     return jsonify(json_groups), 200
 
+@group.route("/user_groups", methods=['POST'])
+def get_groups_by_user_id():
+    data = request.get_json()
+    print(data)
+    groups = groupbuy_db.Group.find({"users": ObjectId(data["user_id"])})
+    json_groups = json_util.dumps(groups)
+    for group in groups:
+        print(group)
+
+    return jsonify(json_groups), 200
+
 
 @group.route("/manage_like", methods=['PUT'])
 def update_vote_for_group():

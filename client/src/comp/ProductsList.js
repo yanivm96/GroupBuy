@@ -30,44 +30,48 @@ export default function ProductsList(props) {
                 {products.map((product, index) => {
                     const hasDivider = index < products.length - 1;
                     return (
-                        <ListItem
-                            divider={hasDivider}
-                            key={product.id}
-                        >
-                            <ListItemAvatar>
-                                {
-                                    product.image
-                                        ? (
-                                            <Box
-                                                component="img"
-                                                src={product.image}
-                                                sx={{
-                                                    borderRadius: 1,
-                                                    height: 48,
-                                                    width: 48
-                                                }}
-                                            />
-                                        )
-                                        : (
-                                            <Box
-                                                sx={{
-                                                    borderRadius: 1,
-                                                    backgroundColor: 'neutral.200',
-                                                    height: 48,
-                                                    width: 48
-                                                }}
-                                            />
-                                        )
-                                }
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={product.item_name}
-                                primaryTypographyProps={{ variant: 'h6', fontWeight: 'bold' }}
-                                secondary={product.amount_of_people + " people left"}
-                                secondaryTypographyProps={{ variant: 'h9' }}
-                            />
+                        <ListItem divider={hasDivider} key={product.id}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <div style={{ marginRight: '10px' }}>
+                                    {product.image ? (
+                                        <Box
+                                            component="img"
+                                            src={product.image}
+                                            sx={{
+                                                borderRadius: 1,
+                                                height: 70,
+                                                width: 70
+                                            }}
+                                        />
+                                    ) : (
+                                        <Box
+                                            sx={{
+                                                borderRadius: 1,
+                                                backgroundColor: 'neutral.200',
+                                                height: 70,
+                                                width: 100
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                <div>
+                                    <span style={{ fontSize: 23, fontWeight: 'bold' }}>
+                                        {`${product.item_name}`}
+                                    </span>
+                                </div>
+                            </div>
+                            <div style={{ marginLeft: 'auto', textAlign: 'center' }}>
+                                <span style={{ fontSize: 25, fontWeight: 'bold' }}>
+                                    {`₪${product.price}`}
+                                </span>
+                                <br />
+                                <span style={{ fontSize: 16 }}>
+                                    {`${product.amount_of_people} people left`}
+                                </span>
+                            </div>
                             <Button onClick={() => handleClick(product._id)}>
-                                <DeleteIcon></DeleteIcon> </Button>
+                                <DeleteIcon />
+                            </Button>
                         </ListItem>
                     );
                 })}

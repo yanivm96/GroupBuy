@@ -92,7 +92,7 @@ export default function Dashboard(props) {
   const [allGroups, setAllGroups] = useState([]);
   const [update, setUpdate] = useState(0);
 
-  const seller_id = location.state?.seller_id;
+  const seller_id = location.state?.id;
 
   useEffect(() => {
     axios.post('http://localhost:5000/group/seller_groups', JSON.stringify({"seller_id" : seller_id}), axiosConfig)

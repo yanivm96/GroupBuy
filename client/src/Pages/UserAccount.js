@@ -17,10 +17,25 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems } from '../comp/UserAccountListItems'
+import { mainListItems } from '../comp/SellerAccountListItems'
+import ProductsList from  '../comp/ProductsList'
+import axios from 'axios';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 
 const drawerWidth = 240;
+
+let axiosConfig = {
+  headers: {
+    credentials: "include",
+    "Content-Type": "application/json;charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Credentials": true,
+  },
+};
+
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
@@ -68,11 +83,47 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const mdTheme = createTheme();
 
-function DashboardContent() {
+export default function Dashboard(props) {
   const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
+  const location = useLocation();
+  const [allGroups, setAllGroups] = useState([]);
+  const [update, setUpdate] = useState(0);
+
+  const user_id = location.state?.id;
+
+  useEffect(() => {
+    console.log(user_id)
+    axios.post('http://localhost:5000/group/user_groups', JSON.stringify({"user_id" : user_id}), axiosConfig)
+      .then(response => {
+        setAllGroups(JSON.parse(response.data));
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, [update]);
+
+
+  function handleDelete(event)
+  {
+    console.log(event.$oid)
+    axios.put("http://localhost:5000/group/manage_like", JSON.stringify({"groupID" : event.$oid,
+    "userID": user_id}), axiosConfig)
+    .then(response => {
+      if (update < 10)
+      {
+        setUpdate(update+1)
+      }
+      else
+      {
+        setUpdate(0)
+      }
+    })
+    .catch(error => {
+    });
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -114,7 +165,6 @@ function DashboardContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Chart */}
               <Grid item xs={12} md={8} lg={9}>
                 <Paper
                   sx={{
@@ -124,9 +174,9 @@ function DashboardContent() {
                     height: 240,
                   }}
                 >
+                    seller details
                 </Paper>
               </Grid>
-              {/* Recent Deposits */}
               <Grid item xs={12} md={4} lg={3}>
                 <Paper
                   sx={{
@@ -138,10 +188,12 @@ function DashboardContent() {
                 >
                 </Paper>
               </Grid>
-              {/* Recent Orders */}
+              
               <Grid item xs={12}>
-                <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                </Paper>
+              <ProductsList
+              handleDelete={handleDelete}
+              products={allGroups}>
+              </ProductsList>
               </Grid>
             </Grid>
           </Container>
@@ -149,8 +201,4 @@ function DashboardContent() {
       </Box>
     </ThemeProvider>
   );
-}
-
-export default function Dashboard() {
-  return <DashboardContent />;
 }
