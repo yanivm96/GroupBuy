@@ -92,10 +92,10 @@ export default function Dashboard(props) {
   const [allGroups, setAllGroups] = useState([]);
   const [update, setUpdate] = useState(0);
 
+
   const user_id = location.state?.id;
 
   useEffect(() => {
-    console.log(user_id)
     axios.post('http://localhost:5000/group/user_groups', JSON.stringify({"user_id" : user_id}), axiosConfig)
       .then(response => {
         setAllGroups(JSON.parse(response.data));
@@ -108,7 +108,6 @@ export default function Dashboard(props) {
 
   function handleDelete(event)
   {
-    console.log(event.$oid)
     axios.put("http://localhost:5000/group/manage_like", JSON.stringify({"groupID" : event.$oid,
     "userID": user_id}), axiosConfig)
     .then(response => {
@@ -192,6 +191,7 @@ export default function Dashboard(props) {
               <Grid item xs={12}>
               <ProductsList
               handleDelete={handleDelete}
+              seller_id={""}
               products={allGroups}>
               </ProductsList>
               </Grid>

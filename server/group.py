@@ -35,12 +35,29 @@ def create_group():
     return {"itemCreated" :created} ,200
 
 
-@group.route("/update", methods=['PUT'])
+@group.route("/update_all_attributes", methods=['PUT'])
 def update_group():
     data = request.get_json()
-    toUpdate ={"$set": {data["attribute"] : data["value"]}}
-    groupbuy_db.Group.update_one({"_id": ObjectId(data["group_id"])}, toUpdate)
-    return "updated"
+    id = ObjectId(data["_id"])
+    amount_of_people = int(data["amount_of_people"])
+    item_name = data["item_name"]
+    price = float(data["price"])
+    item_description = data["item_description"]
+    image = data["image"]
+
+    result = groupbuy_db.Group.update_one(
+        {'_id': id},
+        {'$set' : {
+        'amount_of_people': amount_of_people,
+          'item_name' : item_name,
+          'price' : price,
+          'item_description' : item_description,
+          'image' : image
+          }}
+    )
+
+    return {"itemUpdated": True} , 200
+
 
 @group.route("/all", methods=['GET'])
 def get_all_groups():
@@ -65,8 +82,6 @@ def get_groups_by_user_id():
     print(data)
     groups = groupbuy_db.Group.find({"users": ObjectId(data["user_id"])})
     json_groups = json_util.dumps(groups)
-    for group in groups:
-        print(group)
 
     return jsonify(json_groups), 200
 

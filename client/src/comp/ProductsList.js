@@ -1,6 +1,7 @@
 import { formatDistanceToNow } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
+import EditGroup from './EditGroup';
 import {
     Box,
     Button,
@@ -15,12 +16,19 @@ import {
     ListItemText,
     SvgIcon
 } from '@mui/material';
+import { useState } from 'react';
 
 export default function ProductsList(props) {
     const { products = [], sx } = props;
+    const [edit,setEdit] = useState(props.seller_id!== "")
 
-    const handleClick = (id) => {
+
+    const handleDeleteClick = (id) => {
         props.handleDelete(id)
+    };
+
+    const handleEditClick = (id) => {
+        console.log(id)
     };
 
     return (
@@ -39,8 +47,8 @@ export default function ProductsList(props) {
                                             src={product.image}
                                             sx={{
                                                 borderRadius: 1,
-                                                height: 70,
-                                                width: 70
+                                                height: 100,
+                                                width: 100
                                             }}
                                         />
                                     ) : (
@@ -49,7 +57,7 @@ export default function ProductsList(props) {
                                                 borderRadius: 1,
                                                 backgroundColor: 'neutral.200',
                                                 height: 70,
-                                                width: 100
+                                                width: 70
                                             }}
                                         />
                                     )}
@@ -69,9 +77,15 @@ export default function ProductsList(props) {
                                     {`${product.amount_of_people} people left`}
                                 </span>
                             </div>
-                            <Button onClick={() => handleClick(product._id)}>
-                                <DeleteIcon />
-                            </Button>
+                            <div>
+                                <Button onClick={() => handleDeleteClick(product._id)}>
+                                    <DeleteIcon />
+
+                                </Button>
+                                {edit && <Button onClick={() => handleEditClick(product._id)}>
+                                    <EditGroup seller_id={props.seller_id} group={product} ></EditGroup>
+                                </Button>}
+                            </div>
                         </ListItem>
                     );
                 })}

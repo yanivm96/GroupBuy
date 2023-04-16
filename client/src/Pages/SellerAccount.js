@@ -23,6 +23,9 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import EditGroup from '../comp/EditGroupForm'
+import CreateGroupe from '../comp/CreateGroup';
+import { Button } from '@mui/material';
 
 
 const drawerWidth = 240;
@@ -129,6 +132,7 @@ export default function Dashboard(props) {
         <CssBaseline />
         <AppBar position="absolute" open={open}>
         </AppBar>
+        
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -138,6 +142,7 @@ export default function Dashboard(props) {
               px: [1],
             }}
           >
+            
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
@@ -186,10 +191,10 @@ export default function Dashboard(props) {
                 >
                 </Paper>
               </Grid>
-              
               <Grid item xs={12}>
               <ProductsList
               handleDelete={handleDelete}
+              seller_id={seller_id}
               products={allGroups}>
               </ProductsList>
               </Grid>
