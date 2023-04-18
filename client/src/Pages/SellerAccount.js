@@ -18,7 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from '../comp/SellerAccountListItems'
-import ProductsList from  '../comp/ProductsList'
+import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -93,14 +93,23 @@ export default function Dashboard(props) {
   };
   const location = useLocation();
   const [allGroups, setAllGroups] = useState([]);
+  const [sellerDetails, setsellerDetails] = useState([]);
   const [update, setUpdate] = useState(0);
 
   const seller_id = location.state?.id;
 
   useEffect(() => {
-    axios.post('http://localhost:5000/group/seller_groups', JSON.stringify({"seller_id" : seller_id}), axiosConfig)
+    axios.post('http://localhost:5000/group/seller_groups', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
       .then(response => {
         setAllGroups(JSON.parse(response.data));
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    axios.post('http://localhost:5000/seller/details', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
+      .then(response => {
+        setsellerDetails(JSON.parse(response.data));
       })
       .catch(error => {
         console.log(error);
@@ -108,22 +117,19 @@ export default function Dashboard(props) {
   }, [update]);
 
 
-  function handleDelete(event)
-  {
+  function handleDelete(event) {
     console.log(event.$oid)
-    axios.post("http://localhost:5000/group/delete", JSON.stringify({"group_id" : event.$oid}), axiosConfig)
-    .then(response => {
-      if (update < 10)
-      {
-        setUpdate(update+1)
-      }
-      else
-      {
-        setUpdate(0)
-      }
-    })
-    .catch(error => {
-    });
+    axios.post("http://localhost:5000/group/delete", JSON.stringify({ "group_id": event.$oid }), axiosConfig)
+      .then(response => {
+        if (update < 10) {
+          setUpdate(update + 1)
+        }
+        else {
+          setUpdate(0)
+        }
+      })
+      .catch(error => {
+      });
   }
 
   return (
@@ -132,7 +138,7 @@ export default function Dashboard(props) {
         <CssBaseline />
         <AppBar position="absolute" open={open}>
         </AppBar>
-        
+
         <Drawer variant="permanent" open={open}>
           <Toolbar
             sx={{
@@ -142,7 +148,7 @@ export default function Dashboard(props) {
               px: [1],
             }}
           >
-            
+
             <IconButton onClick={toggleDrawer}>
               <ChevronLeftIcon />
             </IconButton>
@@ -168,35 +174,36 @@ export default function Dashboard(props) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} sx={{ flexGrow: 1 }}>
                 <Paper
                   sx={{
                     p: 2,
-                    display: 'flex',
                     flexDirection: 'column',
                     height: 240,
-                  }}
-                >
-                    seller details
-                </Paper>
-              </Grid>
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
                     display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
                   }}
                 >
+                  <Typography variant="h5" gutterBottom>
+                    Seller Details
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                    <strong>Name:</strong> {sellerDetails.fname} {sellerDetails.lname}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    <strong>Username:</strong> {sellerDetails.username}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    <strong>Email:</strong> {sellerDetails.email}
+                  </Typography>
                 </Paper>
               </Grid>
               <Grid item xs={12}>
-              <ProductsList
-              handleDelete={handleDelete}
-              seller_id={seller_id}
-              products={allGroups}>
-              </ProductsList>
+                <ProductsList
+                  handleDelete={handleDelete}
+                  seller_id={seller_id}
+                  products={allGroups}>
+                </ProductsList>
               </Grid>
             </Grid>
           </Container>

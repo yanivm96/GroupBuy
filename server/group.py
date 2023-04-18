@@ -45,10 +45,14 @@ def update_group():
     item_description = data["item_description"]
     image = data["image"]
 
+    group = groupbuy_db.Group.find_one({"_id": ObjectId(data["_id"])})
+    current_amount_of_people = len(group["users"])
+
+
     result = groupbuy_db.Group.update_one(
         {'_id': id},
         {'$set' : {
-        'amount_of_people': amount_of_people,
+        'amount_of_people': (amount_of_people - current_amount_of_people) ,
           'item_name' : item_name,
           'price' : price,
           'item_description' : item_description,
@@ -71,8 +75,6 @@ def get_groups_by_seller_id():
     data = request.get_json()
     groups = groupbuy_db.Group.find({"seller_id": ObjectId(data["seller_id"])})
     json_groups = json_util.dumps(groups)
-    for group in groups:
-        print(group)
 
     return jsonify(json_groups), 200
 

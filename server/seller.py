@@ -1,5 +1,6 @@
-from flask import Blueprint,request
+from flask import Blueprint,request, jsonify
 from bson.objectid import ObjectId
+from bson import json_util
 import db
 
 seller = Blueprint("seller", __name__)
@@ -45,12 +46,22 @@ def check_email():
         
     return {"exist": exist} , 200
 
+@seller.route("/details", methods=['POST'])
+def get_seller_details():
+    data = request.get_json()
+    
+    seller = groupbuy_db.Seller.find_one({"_id": ObjectId(data["seller_id"])})
+    json_seller = json_util.dumps(seller)
+    return jsonify(json_seller), 200
+
+
 @seller.route("/update", methods=['PUT'])
 def update_seller():
     data = request.get_json()
     toUpdate ={"$set": {data["attribute"] : data["value"]}}
     groupbuy_db.Seller.update_one({"_id": ObjectId(data["seller_id"])}, toUpdate)
-    return "updated"
+
+    return "updated", 200
 
 
 def define_seller():

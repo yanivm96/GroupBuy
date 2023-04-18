@@ -18,7 +18,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from '../comp/SellerAccountListItems'
-import ProductsList from  '../comp/ProductsList'
+import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -90,15 +90,25 @@ export default function Dashboard(props) {
   };
   const location = useLocation();
   const [allGroups, setAllGroups] = useState([]);
+  const [userDetails, setuserDetails] = useState([]);
+
   const [update, setUpdate] = useState(0);
 
 
   const user_id = location.state?.id;
 
   useEffect(() => {
-    axios.post('http://localhost:5000/group/user_groups', JSON.stringify({"user_id" : user_id}), axiosConfig)
+    axios.post('http://localhost:5000/group/user_groups', JSON.stringify({ "user_id": user_id }), axiosConfig)
       .then(response => {
         setAllGroups(JSON.parse(response.data));
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    axios.post('http://localhost:5000/user/details', JSON.stringify({ "user_id": user_id }), axiosConfig)
+      .then(response => {
+        setuserDetails(JSON.parse(response.data));
       })
       .catch(error => {
         console.log(error);
@@ -106,22 +116,21 @@ export default function Dashboard(props) {
   }, [update]);
 
 
-  function handleDelete(event)
-  {
-    axios.put("http://localhost:5000/group/manage_like", JSON.stringify({"groupID" : event.$oid,
-    "userID": user_id}), axiosConfig)
-    .then(response => {
-      if (update < 10)
-      {
-        setUpdate(update+1)
-      }
-      else
-      {
-        setUpdate(0)
-      }
-    })
-    .catch(error => {
-    });
+  function handleDelete(event) {
+    axios.put("http://localhost:5000/group/manage_like", JSON.stringify({
+      "groupID": event.$oid,
+      "userID": user_id
+    }), axiosConfig)
+      .then(response => {
+        if (update < 10) {
+          setUpdate(update + 1)
+        }
+        else {
+          setUpdate(0)
+        }
+      })
+      .catch(error => {
+      });
   }
 
   return (
@@ -164,36 +173,36 @@ export default function Dashboard(props) {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={8} lg={9}>
+              <Grid item xs={12} sx={{ flexGrow: 1 }}>
                 <Paper
                   sx={{
                     p: 2,
-                    display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
+                    height: 200,
+                    display: 'flex',
                   }}
                 >
-                    seller details
+                  <Typography variant="h5" gutterBottom>
+                    User Details
+                  </Typography>
+                  <Divider sx={{ my: 1 }} />
+                  <Typography variant="subtitle1" sx={{ mt: 2 }}>
+                    <strong>Name:</strong> {userDetails.fname} {userDetails.lname}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    <strong>Username:</strong> {userDetails.username}
+                  </Typography>
+                  <Typography variant="subtitle1" sx={{ mt: 1 }}>
+                    <strong>Email:</strong> {userDetails.email}
+                  </Typography>
                 </Paper>
               </Grid>
-              <Grid item xs={12} md={4} lg={3}>
-                <Paper
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                </Paper>
-              </Grid>
-              
               <Grid item xs={12}>
-              <ProductsList
-              handleDelete={handleDelete}
-              seller_id={""}
-              products={allGroups}>
-              </ProductsList>
+                <ProductsList
+                  handleDelete={handleDelete}
+                  seller_id={""}
+                  products={allGroups}>
+                </ProductsList>
               </Grid>
             </Grid>
           </Container>

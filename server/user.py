@@ -1,7 +1,9 @@
 import db,os
-from flask import Blueprint,request,current_app,jsonify #current_app = app in blueprint
+from flask import Blueprint,request,current_app,jsonify 
 from bson.objectid import ObjectId
 from flask_jwt_extended import create_access_token
+from bson import json_util
+
 
 user = Blueprint("user", __name__)
 groupbuy_db = db.groupBuy_db 
@@ -50,7 +52,7 @@ def check_email():
 def delete_user():
     data = request.get_json()
     groupbuy_db.User.delete_one({"_id": ObjectId(data["user_id"])})
-    return "delete"
+    return "delete", 200
 
 
 @user.route("/create", methods=['POST'])
@@ -58,17 +60,23 @@ def create_user():
     print(request.get_json())
     user_created = groupbuy_db.User.insert_one(request.get_json())
     access_token = create_access_token(identity=str(user_created.inserted_id))
-    return {"accessToken": access_token},200
+    return {"accessToken": access_token}, 200
 
+@user.route("/details", methods=['POST'])
+def get_user_details():
+    data = request.get_json()
+    user = groupbuy_db.User.find_one({"_id": ObjectId(data["user_id"])})
+    json_user = json_util.dumps(user)
+
+    return jsonify(json_user), 200
 
 @user.route("/update", methods=['PUT'])
 def update_user():
     data = request.get_json()
     toUpdate ={"$set": {data["attribute"] : data["value"]}}
     groupbuy_db.User.update_one({"_id": ObjectId(data["user_id"])}, toUpdate)
-    return "updated"
 
-
+    return "updated", 200
 
 
 

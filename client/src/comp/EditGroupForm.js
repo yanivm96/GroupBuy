@@ -143,7 +143,7 @@ export default function AddressForm(props) {
       </Grid>
       <Grid container justifyContent="center" sx={{ mt: 3 }}>
         <Grid item xs={12} sm={6} md={6}>
-          <Button type="submit" variant="contained" disableElevation fullWidth>Create</Button>
+          <Button type="submit" variant="contained" disableElevation fullWidth>Edit</Button>
         </Grid>
       </Grid>
     </Grid>
