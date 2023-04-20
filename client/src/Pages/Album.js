@@ -1,25 +1,13 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Button from '@mui/material/Button';
-import CameraIcon from '@mui/icons-material/PhotoCamera';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
-import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Link from '@mui/material/Link';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useParams, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import { useState } from 'react';
-import { useEffect } from 'react';
-import { Header } from '../comp/Header';
+import { useState,useEffect } from 'react';
 import GroupCard from '../comp/GroupCard';
 import Search from '../comp/Search';
 
@@ -87,7 +75,7 @@ export default function Album(props) {
         pt: 8,
         pb: 6,
         display: 'flex',
-        justifyContent: 'center' // center the search bar horizontally
+        justifyContent: 'center' 
       }}
     >
         <Search onSearch={handleGroupsFilter} />
@@ -98,13 +86,8 @@ export default function Album(props) {
           {filteredGroups.map((group) => (
             <Grid item key={group} xs={12} sm={5} md={6} lg={3}>
               <GroupCard
-                price={group.price}
-                amountOfPeople={group.amount_of_people}
-                itemName={group.item_name}
-                image={group.image}
-                description={group.item_description}
+                Group={group}
                 isLoggedIn={isLoggedIn}
-                groupID={group._id.$oid}
                 loggedInID={loggedInID}
                 isSeller={isSeller}>
               </GroupCard>

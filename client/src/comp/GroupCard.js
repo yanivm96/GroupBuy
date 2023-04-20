@@ -9,6 +9,7 @@ import BookmarkAdd from '@mui/icons-material/BookmarkAddOutlined';
 import { Modal } from '@mui/material';
 import LikeButton from './LikeButton';
 import axios from 'axios';
+import GroupModal from './GroupModal';
 
 
 const style = {
@@ -16,9 +17,8 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'rgba(255, 255, 255, 0.9)',
-  border: '2px solid #000',
+  width: '40%',
+  backgroundColor:'white',
   boxShadow: 24,
   p: 4,
 };
@@ -40,15 +40,15 @@ export default function GroupCard(props) {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
+  
   const loggedInID = props.loggedInID
-  const price = props.price
-  const itemName = props.itemName
-  const image = props.image
-  const groupID = props.groupID
+  const price = props.Group.price
+  const itemName = props.Group.item_name
+  const image = props.Group.image
+  const groupID = props.Group._id
   const isSeller = props.isSeller
 
-  
+
 
   const handleAmountOfPeopleChange = (newValue) => {
     setAmountOfPeople(newValue)
@@ -71,8 +71,8 @@ export default function GroupCard(props) {
       </div>
       <AspectRatio minHeight="400px" maxHeight="300px" sx={{ my: 2 }}>
         <img
-          src={props.image}
-          srcSet={props.image}
+          src={image}
+          srcSet={image}
           loading="lazy"
           alt=""
         />
@@ -103,8 +103,9 @@ export default function GroupCard(props) {
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
           >
-            <Box sx={style}>
-              {props.description}
+            <Box style={style}>
+              <GroupModal Group={props.Group}>
+              </GroupModal>
             </Box>
           </Modal>
         </div>}
