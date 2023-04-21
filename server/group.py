@@ -8,8 +8,15 @@ groupbuy_db = db.groupBuy_db
 
 @group.route("/get", methods=['GET'])
 def get_group():
-    define_group()
-    return "get" , 200
+    print('what')
+    id = request.args.get('group_id')
+    try:
+        group = groupbuy_db.Group.find_one({"_id": ObjectId(id)})
+        json_group = json_util.dumps(group)
+
+    except Exception as e:
+        print(e)
+    return jsonify(json_group) , 200
 
 
 @group.route("/delete", methods=['POST'])
@@ -88,63 +95,76 @@ def get_groups_by_user_id():
     return jsonify(json_groups), 200
 
 
-@group.route("/manage_like", methods=['PUT'])
-def update_vote_for_group():
-    data = request.get_json()
-    joined_users_list = False
-    user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
-                                                   "users": ObjectId(data["userID"])})
+# @group.route("/manage_like", methods=['PUT'])
+# def update_vote_for_group():
+#     data = request.get_json()
+#     joined_users_list = False
+#     user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
+#                                                    "users": ObjectId(data["userID"])})
     
-    group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"])})
-    numberOfPeople = group["amount_of_people"]
+#     group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"])})
+#     numberOfPeople = group["amount_of_people"]
 
+#     if user_in_group:
+#         delete_from_users_list(data["userID"],data["groupID"])
+#         numberOfPeople+=1
+
+#     else:
+#         insert_to_users_list(data["userID"],data["groupID"])
+#         joined_users_list = True
+#         numberOfPeople-=1
+
+
+#     return {"joined": joined_users_list,
+#             "amount_of_people": numberOfPeople}, 200
+
+# def find_user_or_seller(isSeller, id):
+#     person = None
+#     if isSeller:
+#         person = groupbuy_db.Seller.find_one({"_id": ObjectId(id)})
+#     else:
+#         person = groupbuy_db.User.find_one({"_id": ObjectId(id)})
+
+#     return person
+
+def is_user_in_group(user_id,group_id):
+    inside = False
+    user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(group_id),
+                                                   "users": ObjectId(user_id)})
     if user_in_group:
-        delete_from_users_list(data["userID"],data["groupID"])
-        numberOfPeople+=1
+        inside= True
 
-    else:
-        insert_to_users_list(data["userID"],data["groupID"])
-        joined_users_list = True
-        numberOfPeople-=1
+    return inside
 
-
-    return {"joined": joined_users_list,
-            "amount_of_people": numberOfPeople}, 200
-
-def find_user_or_seller(isSeller, id):
-    person = None
-    if isSeller:
-        person = groupbuy_db.Seller.find_one({"_id": ObjectId(id)})
-    else:
-        person = groupbuy_db.User.find_one({"_id": ObjectId(id)})
-
-    return person
-
-@group.route("/like", methods=['POST'])
-def is_user_like_group():
+@group.route("/leave", methods=['PUT'])
+def delete_from_users_list():
     data = request.get_json()
-    is_like = False
-    user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
-                                                   "users": ObjectId(data["userID"])})
-    if user_in_group:
-        is_like= True
-
-    return {"is_like": is_like}, 200
-
-
-def delete_from_users_list(user_id,group_id):
-    groupbuy_db.Group.update_one(
-    {"_id": ObjectId(group_id)},
-    {"$pull": {"users": ObjectId(user_id)}})
-    update_amount_of_people(group_id, True)
+    print('what')
+    leave = True
+    try:
+        groupbuy_db.Group.update_one(
+        {"_id": ObjectId(data["group_id"])},
+        {"$pull": {"users": ObjectId(data["user_id"])}})
+    except Exception as e:
+        leave = False
+        print(e)
+    return {"result": leave}, 200
     
-
-def insert_to_users_list(user_id,group_id):
-    groupbuy_db.Group.update_one(
-    {"_id": ObjectId(group_id)},
-    {"$push": {"users": ObjectId(user_id)}})
-    update_amount_of_people(group_id, False)
-
+@group.route("/join", methods=['PUT'])
+def insert_to_users_list():
+    data = request.get_json()
+    joined = True
+    try:
+        if not is_user_in_group(data["user_id"],data["group_id"]):
+            groupbuy_db.Group.update_one(
+            {"_id": ObjectId(data["group_id"])},
+            {"$push": {"users": ObjectId(data["user_id"])}})
+        else:
+            raise Exception("User already in group")
+    except Exception as e:
+        joined = False
+        print(e)
+    return {"result": joined}, 200
 
 def update_amount_of_people(group_id,increas):
     if increas:

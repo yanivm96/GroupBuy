@@ -40,6 +40,8 @@ const theme = createTheme();
 export default function Album(props) {
   const [allGroups, setAllGroups] = useState([]);
   const [filteredGroups, setFilteredGroups] = useState([]);
+  const [exitModal, setExitModal] = useState(false);
+
 
   const isLoggedIn = props.isLoggedIn;
   const loggedInID = props.loggedInID;
@@ -54,6 +56,9 @@ export default function Album(props) {
     }
 
   }
+  function modalChange() {
+    setExitModal(!exitModal)
+  }
 
   useEffect(() => {
     axios.get('http://localhost:5000/group/all')
@@ -64,7 +69,7 @@ export default function Album(props) {
       .catch(error => {
         console.log(error);
       });
-  }, [isLoggedIn]);
+  }, [isLoggedIn, exitModal]);
 
   return (
     <div>
@@ -89,7 +94,8 @@ export default function Album(props) {
                 Group={group}
                 isLoggedIn={isLoggedIn}
                 loggedInID={loggedInID}
-                isSeller={isSeller}>
+                isSeller={isSeller}
+                setModal={modalChange}>
               </GroupCard>
             </Grid>
           ))}

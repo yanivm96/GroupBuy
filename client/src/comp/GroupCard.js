@@ -39,7 +39,10 @@ export default function GroupCard(props) {
   const [amountOfPeople, setAmountOfPeople] = React.useState(props.amountOfPeople)
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false)
+    props.setModal()
+  };
   
   const loggedInID = props.loggedInID
   const price = props.Group.price
@@ -47,7 +50,6 @@ export default function GroupCard(props) {
   const image = props.Group.image
   const groupID = props.Group._id
   const isSeller = props.isSeller
-
 
 
   const handleAmountOfPeopleChange = (newValue) => {
@@ -104,7 +106,7 @@ export default function GroupCard(props) {
             aria-describedby="modal-modal-description"
           >
             <Box style={style}>
-              <GroupModal Group={props.Group}>
+              <GroupModal group={props.Group} GroupId={groupID} loggedInID={loggedInID}>
               </GroupModal>
             </Box>
           </Modal>

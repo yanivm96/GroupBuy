@@ -38,12 +38,12 @@ LinearProgressWithLabel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-export default function LinearWithValueLabel() {
+export default function LinearWithValueLabel(props) {
   const [progress, setProgress] = React.useState(10);
 
   return (
     <Box sx={{ width: '100%' }}>
-      <LinearProgressWithLabel value={50} />
+      <LinearProgressWithLabel value={props.value} />
     </Box>
   );
 }
