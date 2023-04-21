@@ -59,7 +59,7 @@ def update_group():
     result = groupbuy_db.Group.update_one(
         {'_id': id},
         {'$set' : {
-        'amount_of_people': (amount_of_people - current_amount_of_people) ,
+        'amount_of_people': (amount_of_people) ,
           'item_name' : item_name,
           'price' : price,
           'item_description' : item_description,

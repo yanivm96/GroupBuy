@@ -35,7 +35,7 @@ export default function GroupModal(props) {
     const [userInGroup, setUserInGroup] = useState(false)
     const [group, setGroup] = useState({});
     const [action, setAction] = useState(true)
-    const [amountOfUsers, changeAmountOfUsers] = useState(props.group.users.length)
+    const [amountOfUsers, changeAmountOfUsers] = useState(0)
 
     useEffect(() => {
         axios.get('http://localhost:5000/group/get', {params : {'group_id' : props.GroupId.$oid}})
