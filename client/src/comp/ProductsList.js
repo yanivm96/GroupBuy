@@ -2,6 +2,8 @@ import { formatDistanceToNow } from 'date-fns';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import EditGroup from './EditGroup';
+import LinearWithValueLabel from './LinearProgress';
+import Typography from '@mui/joy/Typography';
 import {
     Box,
     Button,
@@ -20,8 +22,7 @@ import { useState } from 'react';
 
 export default function ProductsList(props) {
     const { products = [], sx } = props;
-    const [edit,setEdit] = useState(props.seller_id!== "")
-
+    const [edit, setEdit] = useState(props.seller_id !== "")
 
     const handleDeleteClick = (id) => {
         props.handleDelete(id)
@@ -31,12 +32,24 @@ export default function ProductsList(props) {
         console.log(id)
     };
 
+    function setAmountOfPeople(product) {
+        let amount = 0
+
+        if (product.users) {
+            amount = product.users.length
+        }
+
+        return amount
+    }
+
     return (
         <Card sx={sx}>
             <CardHeader title="Your groups" />
             <List>
                 {products.map((product, index) => {
                     const hasDivider = index < products.length - 1;
+                    const amountOfUsers = setAmountOfPeople(product)
+
                     return (
                         <ListItem divider={hasDivider} key={product.id}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -74,7 +87,8 @@ export default function ProductsList(props) {
                                 </span>
                                 <br />
                                 <span style={{ fontSize: 16 }}>
-                                    {`${product.amount_of_people} people left`}
+                                    Group Progression: {amountOfUsers} / {product.amount_of_people}
+                                    <LinearWithValueLabel value={amountOfUsers / product.amount_of_people * 100}></LinearWithValueLabel>
                                 </span>
                             </div>
                             <div>
@@ -90,20 +104,6 @@ export default function ProductsList(props) {
                     );
                 })}
             </List>
-            <Divider />
-            <CardActions sx={{ justifyContent: 'flex-end' }}>
-                <Button
-                    color="inherit"
-                    endIcon={(
-                        <SvgIcon fontSize="small">
-                        </SvgIcon>
-                    )}
-                    size="small"
-                    variant="text"
-                >
-                    View all
-                </Button>
-            </CardActions>
         </Card>
     );
 };
