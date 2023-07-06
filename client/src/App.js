@@ -6,7 +6,10 @@ import { Header } from "./comp/Header";
 import { useState, useEffect, } from 'react';
 import axios from 'axios';
 import SellerAccount from "./Pages/SellerAccount"
+import SellerLikes from "./Pages/SellerLikes"
+
 import UserAccount from "./Pages/UserAccount"
+import UserLikes from "./Pages/UserLikes"
 
 
 function App() {
@@ -55,6 +58,8 @@ function App() {
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Seller" element={<SellerAccount />} />
         <Route path="/User" element={<UserAccount />} />
+        <Route path="/User/Likes" element={<UserLikes />} />
+        <Route path="/Seller/Likes" element={<SellerLikes />} />
 
 
       </Routes>

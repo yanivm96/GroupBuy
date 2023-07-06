@@ -4,6 +4,7 @@ import IconButton from '@mui/joy/IconButton';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 
 
@@ -18,23 +19,40 @@ let axiosConfig = {
 };
 
 export default function LikeButton(props) {
-  const [likedButton, setLikedButton] = React.useState("solid")
+  const [likedButton, setLikedButton] = React.useState("")
   const loggedInID = props.loggedInID
   const groupID = props.groupID
-  const isSeller = props.isSeller
+
+  const userInput = {
+    userID: loggedInID,
+    groupID: groupID.$oid,
+  };
+  
+  useEffect(() => {
+    axios.post("http://localhost:5000/group/like", JSON.stringify(userInput), axiosConfig)
+      .then(response => {
+        if (response.data["like"] === true) {
+          setLikedButton("solid");
+        } else {
+          setLikedButton("");
+        }
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }, []);
 
 
   const handleLikeButton = (event) => {
     axios.put('http://localhost:5000/group/manage_like', {
       userID: loggedInID,
-      groupID: groupID,
-      isSeller: isSeller,
+      groupID: groupID.$oid,
     }).then((response) => {
-      if (response.data.joined == false) {
-        setLikedButton("solid")
+      if (response.data["joined"] == false) {
+        setLikedButton("")
       }
       else {
-        setLikedButton("")
+        setLikedButton("solid")
       }
     })
       .catch((error) => {
@@ -43,18 +61,10 @@ export default function LikeButton(props) {
 
   }
 
-  const userInput = {
-    userID: loggedInID,
-    groupID: groupID,
-  };
-  axios.post("http://localhost:5000/group/like", JSON.stringify(userInput), axiosConfig)
-    .then((res) => {
-      if (res.data["is_like"] == true) {
-        setLikedButton("")
-      } else {
-        setLikedButton("solid")
-      }
-    });
+
+
+
+
   return (
     <IconButton
       onClick={handleLikeButton}

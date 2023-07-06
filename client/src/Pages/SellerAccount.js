@@ -17,7 +17,7 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems } from '../comp/SellerAccountListItems'
+import SellerAccountListItems from '../comp/SellerAccountListItems'
 import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
 import { useState } from 'react';
@@ -93,10 +93,12 @@ export default function Dashboard(props) {
   };
   const location = useLocation();
   const [allGroups, setAllGroups] = useState([]);
+  const [like, setLike] = useState(false);
   const [sellerDetails, setsellerDetails] = useState([]);
+  const [seller_id, setSellerID] = useState(location.state?.seller_id);
+
   const [update, setUpdate] = useState(0);
 
-  const seller_id = location.state?.id;
 
   useEffect(() => {
     axios.post('http://localhost:5000/group/seller_groups', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
@@ -155,7 +157,7 @@ export default function Dashboard(props) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <SellerAccountListItems seller_id={seller_id}></SellerAccountListItems>
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>
@@ -202,7 +204,8 @@ export default function Dashboard(props) {
                 <ProductsList
                   handleDelete={handleDelete}
                   seller_id={seller_id}
-                  products={allGroups}>
+                  products={allGroups}
+                  like={like}>
                 </ProductsList>
               </Grid>
             </Grid>

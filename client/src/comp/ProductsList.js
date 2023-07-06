@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import EditGroup from './EditGroup';
 import LinearWithValueLabel from './LinearProgress';
 import Typography from '@mui/joy/Typography';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import {
     Box,
     Button,
@@ -23,6 +24,9 @@ import { useState } from 'react';
 export default function ProductsList(props) {
     const { products = [], sx } = props;
     const [edit, setEdit] = useState(props.seller_id !== "")
+    const [like, setLike] = useState(props.like)
+    const [title, setTitle] = useState(props.like ? "Your Liked Groups" : "Your Groups");
+
 
     const handleDeleteClick = (id) => {
         props.handleDelete(id)
@@ -30,6 +34,10 @@ export default function ProductsList(props) {
 
     const handleEditClick = (id) => {
         console.log(id)
+    };
+
+    const handleLikeClick = (id) => {
+        props.handleLike(id)
     };
 
     function setAmountOfPeople(product) {
@@ -41,10 +49,9 @@ export default function ProductsList(props) {
 
         return amount
     }
-
     return (
         <Card sx={sx}>
-            <CardHeader title="Your groups" />
+            <CardHeader title={title} />
             <List>
                 {products.map((product, index) => {
                     const hasDivider = index < products.length - 1;
@@ -92,11 +99,15 @@ export default function ProductsList(props) {
                                 </span>
                             </div>
                             <div>
-                                <Button onClick={() => handleDeleteClick(product._id)}>
-                                    <DeleteIcon />
+                                {like && <Button onClick={() => handleLikeClick(product._id)}>
+                                    <FavoriteIcon />
+                                </Button>}
 
-                                </Button>
-                                {edit && <Button onClick={() => handleEditClick(product._id)}>
+                                {!like && <Button onClick={() => handleDeleteClick(product._id)}>
+                                    <DeleteIcon />
+                                </Button>}
+
+                                {!like && edit && <Button onClick={() => handleEditClick(product._id)}>
                                     <EditGroup seller_id={props.seller_id} group={product} ></EditGroup>
                                 </Button>}
                             </div>

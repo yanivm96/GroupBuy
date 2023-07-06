@@ -17,7 +17,7 @@ import Link from '@mui/material/Link';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { mainListItems } from '../comp/SellerAccountListItems'
+import UserAccountListItems from '../comp/UserAccountListItems'
 import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
 import { useState } from 'react';
@@ -91,11 +91,10 @@ export default function Dashboard(props) {
   const location = useLocation();
   const [allGroups, setAllGroups] = useState([]);
   const [userDetails, setuserDetails] = useState([]);
-
+  const [like, setLike] = useState(false);
+  const [user_id, setUserID] = useState(location.state?.user_id);
   const [update, setUpdate] = useState(0);
 
-
-  const user_id = location.state?.id;
 
   useEffect(() => {
     axios.post('http://localhost:5000/group/user_groups', JSON.stringify({ "user_id": user_id }), axiosConfig)
@@ -117,9 +116,9 @@ export default function Dashboard(props) {
 
 
   function handleDelete(event) {
-    axios.put("http://localhost:5000/group/manage_like", JSON.stringify({
-      "groupID": event.$oid,
-      "userID": user_id
+    axios.put("http://localhost:5000/group/leave", JSON.stringify({
+      "group_id": event.$oid,
+      "user_id": user_id
     }), axiosConfig)
       .then(response => {
         if (update < 10) {
@@ -154,7 +153,7 @@ export default function Dashboard(props) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            {mainListItems}
+            <UserAccountListItems user_id={user_id}/>
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>
@@ -201,7 +200,8 @@ export default function Dashboard(props) {
                 <ProductsList
                   handleDelete={handleDelete}
                   seller_id={""}
-                  products={allGroups}>
+                  products={allGroups}
+                  like={like}>
                 </ProductsList>
               </Grid>
             </Grid>

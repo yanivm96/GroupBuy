@@ -8,7 +8,6 @@ groupbuy_db = db.groupBuy_db
 
 @group.route("/get", methods=['GET'])
 def get_group():
-    print('what')
     id = request.args.get('group_id')
     try:
         group = groupbuy_db.Group.find_one({"_id": ObjectId(id)})
@@ -30,7 +29,6 @@ def delete_group():
 def create_group():
     created = False
     data = request.get_json()
-    print(data)
     data["price"] = float(data["price"])
     data["amount_of_people"] = int(data["amount_of_people"])
     data["seller_id"] = ObjectId(data["seller_id"])
@@ -85,34 +83,101 @@ def get_groups_by_seller_id():
 
     return jsonify(json_groups), 200
 
+@group.route("/seller_liked_groups", methods=['POST'])
+def get_liked_groups_by_seller_id():
+    data = request.get_json()
+    groups = groupbuy_db.Group.find({"likes": ObjectId(data["seller_id"])})
+    json_groups = json_util.dumps(groups)
+
+    return jsonify(json_groups), 200
+
 @group.route("/user_groups", methods=['POST'])
 def get_groups_by_user_id():
     data = request.get_json()
-    print(data)
     groups = groupbuy_db.Group.find({"users": ObjectId(data["user_id"])})
     json_groups = json_util.dumps(groups)
 
     return jsonify(json_groups), 200
 
+@group.route("/liked_groups", methods=['POST'])
+def get_liked_groups_by_user_id():
+    data = request.get_json()
+    groups = groupbuy_db.Group.find({"likes": ObjectId(data["id"])})
+    json_groups = json_util.dumps(groups)
+
+    return jsonify(json_groups), 200
+
+@group.route("/like", methods=['POST'])
+def get_user_like():
+    data = request.get_json()
+    like = False
+    user_liked_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
+                                                       "likes": ObjectId(data["userID"])})
+    if user_liked_group:
+        like = True
+    
+    return {"like": like}, 200
+
 
 @group.route("/manage_like", methods=['PUT'])
 def update_vote_for_group():
     data = request.get_json()
-    joined_users_list = False
-    user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
-                                                   "users": ObjectId(data["userID"])})
+    joined_likes_list = False
+
+    user_liked_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
+                                                       "likes": ObjectId(data["userID"])})
     
     group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"])})
-
-    if user_in_group:
-        delete_from_users_list(data["userID"],data["groupID"])
+    if user_liked_group:
+        delete_from_likes_list(data["userID"],data["groupID"])
 
     else:
-        insert_to_users_list(data["userID"],data["groupID"])
-        joined_users_list = True
+        insert_to_likes_list(data["userID"],data["groupID"])
+        joined_likes_list = True
 
+    return {"joined": joined_likes_list}, 200
 
-    return {"joined": joined_users_list}, 200
+@group.route("/unlike", methods=['PUT'])
+def unlike():
+    data = request.get_json()
+    return delete_from_likes_list(data["id"],data["group_id"])
+
+    
+def delete_from_likes_list(user_id, group_id):
+    leave = True
+    try:
+        groupbuy_db.Group.update_one(
+        {"_id": ObjectId(group_id)},
+        {"$pull": {"likes": ObjectId(user_id)}})
+    except Exception as e:
+        leave = False
+        print(e)
+    return {"result": leave}, 200
+
+def insert_to_likes_list(user_id, group_id):
+    joined = True
+    try:
+        if not is_user_liked_group(user_id, group_id):
+            groupbuy_db.Group.update_one(
+            {"_id": ObjectId(group_id)},
+            {"$push": {"likes": ObjectId(user_id)}})
+        else:
+            raise Exception("User already like group")
+    except Exception as e:
+        joined = False
+        print(e)
+    return {"result": joined}, 200
+
+def is_user_liked_group(user_id,group_id):
+    like = False
+    user_liked_group = groupbuy_db.Group.find_one({"_id": ObjectId(group_id),
+                                                   "likes": ObjectId(user_id)})
+    
+    if user_liked_group:
+        like= True
+
+    return like
+
 
 def find_user_or_seller(isSeller, id):
     person = None
@@ -135,7 +200,7 @@ def is_user_in_group(user_id,group_id):
 @group.route("/leave", methods=['PUT'])
 def delete_from_users_list():
     data = request.get_json()
-    print('what')
+    print(data)
     leave = True
     try:
         groupbuy_db.Group.update_one(
@@ -202,6 +267,14 @@ def define_group():
                 "description": "image must be a string and is required"
                 },
                 "users": {
+                "bsonType": "array",
+                "items":{
+                    "bsonType" : "objectId",
+                    "description":"'user' must be a string and is required"
+                },
+                "description": "'array' must be a string and is required"
+                },
+                "likes": {
                 "bsonType": "array",
                 "items":{
                     "bsonType" : "objectId",

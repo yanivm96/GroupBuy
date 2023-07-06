@@ -42,14 +42,15 @@ export default function ProfileIcon(props) {
 
   const handleMyAccount = () => {
     console.log(props.loggedInID)
-    const id = props.loggedInID
+    const user_id = props.loggedInID
+    const seller_id = props.loggedInID
     setAnchorEl(null);
     if (props.isSeller === true) {
-      navigate('/Seller', { state: { id } });
+      navigate('/Seller', { state: { seller_id } });
     }
     else
     {
-      navigate('/User', { state: { id } });
+      navigate('/User', { state: { user_id } });
     }
   };
 

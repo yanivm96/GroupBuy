@@ -65,8 +65,6 @@ export default function GroupCard(props) {
       <Typography level="body2">Amount of people: {amountOfPeople}</Typography>
       <div>
         {props.isLoggedIn && <LikeButton
-          onAmountOfPeopleChange={handleAmountOfPeopleChange}
-          isSeller={isSeller}
           groupID={groupID}
           loggedInID={props.loggedInID}>
         </LikeButton>}
