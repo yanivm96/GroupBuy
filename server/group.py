@@ -95,37 +95,33 @@ def get_groups_by_user_id():
     return jsonify(json_groups), 200
 
 
-# @group.route("/manage_like", methods=['PUT'])
-# def update_vote_for_group():
-#     data = request.get_json()
-#     joined_users_list = False
-#     user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
-#                                                    "users": ObjectId(data["userID"])})
+@group.route("/manage_like", methods=['PUT'])
+def update_vote_for_group():
+    data = request.get_json()
+    joined_users_list = False
+    user_in_group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"]),
+                                                   "users": ObjectId(data["userID"])})
     
-#     group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"])})
-#     numberOfPeople = group["amount_of_people"]
+    group = groupbuy_db.Group.find_one({"_id": ObjectId(data["groupID"])})
 
-#     if user_in_group:
-#         delete_from_users_list(data["userID"],data["groupID"])
-#         numberOfPeople+=1
+    if user_in_group:
+        delete_from_users_list(data["userID"],data["groupID"])
 
-#     else:
-#         insert_to_users_list(data["userID"],data["groupID"])
-#         joined_users_list = True
-#         numberOfPeople-=1
+    else:
+        insert_to_users_list(data["userID"],data["groupID"])
+        joined_users_list = True
 
 
-#     return {"joined": joined_users_list,
-#             "amount_of_people": numberOfPeople}, 200
+    return {"joined": joined_users_list}, 200
 
-# def find_user_or_seller(isSeller, id):
-#     person = None
-#     if isSeller:
-#         person = groupbuy_db.Seller.find_one({"_id": ObjectId(id)})
-#     else:
-#         person = groupbuy_db.User.find_one({"_id": ObjectId(id)})
+def find_user_or_seller(isSeller, id):
+    person = None
+    if isSeller:
+        person = groupbuy_db.Seller.find_one({"_id": ObjectId(id)})
+    else:
+        person = groupbuy_db.User.find_one({"_id": ObjectId(id)})
 
-#     return person
+    return person
 
 def is_user_in_group(user_id,group_id):
     inside = False

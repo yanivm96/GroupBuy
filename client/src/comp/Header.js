@@ -27,22 +27,21 @@ export const Header = (props) => {
     const isSeller = props.isSeller;
     const loggedInID = props.loggedInID;
 
-    const handleHomeClicked = () =>
-    {
+    const handleHomeClicked = () => {
         navigate('/');
     }
 
     return (
-        <AppBar position="relative">
+        <AppBar position="relative" sx={{ backgroundColor: '#2b6777' }}>
             <Toolbar>
-                <Button variant="contained" disableElevation onClick={handleHomeClicked} >
-                    <HomeIcon></HomeIcon>
+                <Button variant="contained" onClick={handleHomeClicked} sx={{ backgroundColor: '#2b6777', '&:hover': { backgroundColor: '#52ab98', }, }}>
+                    <HomeIcon />
                 </Button>
                 {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} />}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
-                    <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID}></ProfileIcon>
+                    <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID} />
                 </Typography>
             </Toolbar>
-        </AppBar >
+        </AppBar>
     )
 }

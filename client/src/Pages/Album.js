@@ -72,39 +72,39 @@ export default function Album(props) {
   }, [isLoggedIn, exitModal]);
 
   return (
-    <div>
-      <CssBaseline />
-      <Box
-      sx={{
-        bgcolor: 'background.paper',
-        pt: 8,
-        pb: 6,
-        display: 'flex',
-        justifyContent: 'center' 
-      }}
-    >
-        <Search onSearch={handleGroupsFilter} />
-    </Box>
+   <div sx={{ bgcolor: '#E8DFCA' }}>
+  <CssBaseline />
+  <Box
+    sx={{
+      bgcolor: 'background.paper',
+      pt: 8,
+      pb: 6,
+      display: 'flex',
+      justifyContent: 'center' 
+    }}
+  >
+    <Search onSearch={handleGroupsFilter} />
+  </Box>
 
-      <Container sx={{ py: 7 }} maxWidth="xl">
-        <Grid container spacing={10}>
-          {filteredGroups.map((group) => (
-            <Grid item key={group} xs={12} sm={5} md={6} lg={3}>
-              <GroupCard
-                Group={group}
-                isLoggedIn={isLoggedIn}
-                loggedInID={loggedInID}
-                isSeller={isSeller}
-                setModal={modalChange}>
-              </GroupCard>
-            </Grid>
-          ))}
+  <Container sx={{ py: 7 }} maxWidth="xl">
+    <Grid container spacing={10}>
+      {filteredGroups.map((group) => (
+        <Grid item key={group} xs={12} sm={5} md={6} lg={3}>
+          <GroupCard
+            Group={group}
+            isLoggedIn={isLoggedIn}
+            loggedInID={loggedInID}
+            isSeller={isSeller}
+            setModal={modalChange}>
+          </GroupCard>
         </Grid>
-      </Container>
-      <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
-        <Typography variant="h6" align="center" gutterBottom>
-        </Typography>
-      </Box>
-    </div>
+      ))}
+    </Grid>
+  </Container>
+  <Box sx={{ bgcolor: 'background.paper', p: 6 }} component="footer">
+    <Typography variant="h6" align="center" gutterBottom>
+    </Typography>
+  </Box>
+</div>
   );
 }

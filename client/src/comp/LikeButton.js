@@ -36,8 +36,6 @@ export default function LikeButton(props) {
       else {
         setLikedButton("")
       }
-      props.onAmountOfPeopleChange(response.data["amount_of_people"])
-
     })
       .catch((error) => {
         console.log(error);

@@ -18,7 +18,7 @@ const style = {
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '40%',
-  backgroundColor:'white',
+  backgroundColor: 'white',
   boxShadow: 24,
   p: 4,
 };
@@ -43,7 +43,7 @@ export default function GroupCard(props) {
     setOpen(false)
     props.setModal()
   };
-  
+
   const loggedInID = props.loggedInID
   const price = props.Group.price
   const itemName = props.Group.item_name
@@ -58,7 +58,7 @@ export default function GroupCard(props) {
 
 
   return (
-    <Card variant="outlined" sx={{ width: 320 }}>
+    <Card variant="outlined" sx={{ width: 320, backgroundColor: '#ffffff' }}>
       <Typography level="h2" fontSize="md" sx={{ mb: 0.5 }}>
         {itemName}
       </Typography>
@@ -95,8 +95,9 @@ export default function GroupCard(props) {
             color="primary"
             aria-label="Explore Bahamas Islands"
             disableElevation
-            sx={{ ml: 20, fontWeight: 1000 }}
-          >
+            sx={{ ml: 20, fontWeight: 1000,backgroundColor: '#2b6777','&:hover': {
+              backgroundColor: '#52ab98',
+            }}}>
             Details
           </Button>
           <Modal
@@ -111,7 +112,7 @@ export default function GroupCard(props) {
             </Box>
           </Modal>
         </div>}
-      </Box>
-    </Card>
+    </Box>
+    </Card >
   );
 }
