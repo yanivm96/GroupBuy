@@ -33,6 +33,11 @@
                 "internalType": "string",
                 "name": "productKey",
                 "type": "string"
+            },
+            {
+                "internalType": "uint256",
+                "name": "_numItems",
+                "type": "uint256"
             }
         ],
         "name": "buyItems",
