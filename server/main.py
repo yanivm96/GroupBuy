@@ -6,13 +6,32 @@ from db import groupBuy_db, ObjectId
 from flask import Flask, request,Blueprint, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager,create_access_token,unset_jwt_cookies, jwt_required, get_jwt_identity
-
 import os
+from web3 import Web3
+
+ganache_url = "http://127.0.0.1:7545"
+web3 = Web3(Web3.HTTPProvider(ganache_url))
+print("-----------------test--------------")
+print(web3.is_connected())
+
+account_seller =  "0xE13866752B3272686ca06BDb4Ae8Af98b3Ccc19E"
+account_buyer = "0x012aefDC2a053834fc686B7dE7e77d49e2c96579"
+buyer_private_key = "0xb3f4a6fd9023c962a6e8ac7266353d81dca982b53e1bd3e3da88111214a429e7"
+amount_to_pay = Web3.to_wei(3, 'ether')
+transaction = {
+    'nance': '',
+    'to': account_seller,
+    'value': amount_to_pay
+}
+
+print(web3.eth.blockNumber)
+balance = web3.eth.getBalance("0x39C7BC5496f4eaaa1fF75d88E079C22f0519E7b9")
+print(web3.fromWei(balance, "ether"))
+print("-----------------end of test--------------")
 
 app = Flask(__name__)
 cors = CORS(app,supports_credentials=True)
 app.config["JWT_SECRET_KEY"] = os.environ.get("SECERT_KEY")
-
 
 
 jwt = JWTManager(app)
