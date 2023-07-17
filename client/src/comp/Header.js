@@ -26,7 +26,7 @@ export const Header = (props) => {
     const isLoggedIn = props.isLoggedIn;
     const isSeller = props.isSeller;
     const loggedInID = props.loggedInID;
-
+    const provider = props.provider
     const handleHomeClicked = () => {
         navigate('/');
     }
@@ -37,7 +37,7 @@ export const Header = (props) => {
                 <Button variant="contained" onClick={handleHomeClicked} sx={{ backgroundColor: '#2b6777', '&:hover': { backgroundColor: '#52ab98', }, }}>
                     <HomeIcon />
                 </Button>
-                {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} />}
+                {isLoggedIn && isSeller && <CreateGroupe loggedInID={loggedInID} provider={provider}/>}
                 <Typography variant="h6" color="inherit" noWrap sx={{ ml: 'auto' }}>
                     <ProfileIcon isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID} />
                 </Typography>

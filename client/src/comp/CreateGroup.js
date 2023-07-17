@@ -24,7 +24,7 @@ export default function CreateGroupe(props) {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const loggedInID = props.loggedInID;
-
+  const provider= props.provider
   return (
     <div>
       <Button onClick={handleOpen} sx={{
@@ -41,7 +41,7 @@ export default function CreateGroupe(props) {
         aria-describedby="modal-modal-description"
       >
         <Box sx={style}>
-          <AddressForm loggedInID={loggedInID}></AddressForm>
+          <AddressForm loggedInID={loggedInID} provider={provider}></AddressForm>
         </Box>
       </Modal>
     </div>

@@ -42,7 +42,7 @@ export default function Album(props) {
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [exitModal, setExitModal] = useState(false);
 
-
+  const provider = props.provider;
   const isLoggedIn = props.isLoggedIn;
   const loggedInID = props.loggedInID;
   const isSeller = props.isSeller;
@@ -95,7 +95,8 @@ export default function Album(props) {
             isLoggedIn={isLoggedIn}
             loggedInID={loggedInID}
             isSeller={isSeller}
-            setModal={modalChange}>
+            setModal={modalChange}
+            provider={provider}>
           </GroupCard>
         </Grid>
       ))}

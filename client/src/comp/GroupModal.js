@@ -9,8 +9,13 @@ import Typography from '@mui/joy/Typography';
 import Button from '@mui/material/Button';
 import Divider from '@mui/material/Divider';
 import axios from 'axios';
-import { useState,useEffect } from 'react';
+import SmartContractABI from "../SmartContractABI.json"
+import { ethers } from 'ethers';
+import { useState, useEffect } from 'react';
 import { getPaginationItemUtilityClass } from '@mui/material';
+import { contractAddress } from "../contractAddress.js"
+import CircularProgress from "./CircularProgress.js"
+
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -23,8 +28,8 @@ const Item = styled(Paper)(({ theme }) => ({
 
 
 const Joined = styled('div')(({ theme }) => ({
-  color: 'green',
-  padding: theme.spacing(1),
+    color: 'green',
+    padding: theme.spacing(1),
 }));
 
 
@@ -36,19 +41,21 @@ export default function GroupModal(props) {
     const [group, setGroup] = useState({});
     const [action, setAction] = useState(true)
     const [amountOfUsers, changeAmountOfUsers] = useState(0)
+    const [circularProgShow, setCircularProgShow] = useState(false)
 
     useEffect(() => {
-        axios.get('http://localhost:5000/group/get', {params : {'group_id' : props.GroupId.$oid}})
-        .then(response => {
-          console.log('useeffect')
-          console.log(JSON.parse(response.data))
-          setGroup(JSON.parse(response.data));
-        })
-        .catch(error => {
-          console.log(error);
-        });
-      }, [action]);
-    
+        setCircularProgShow(false)
+        axios.get('http://localhost:5000/group/get', { params: { 'group_id': props.GroupId.$oid } })
+            .then(response => {
+                console.log('useeffect')
+                console.log(JSON.parse(response.data))
+                setGroup(JSON.parse(response.data));
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }, [action]);
+
     const checkIfUserInGroup = () => {
         var found = false
         group.users.forEach(function (user) {
@@ -56,39 +63,65 @@ export default function GroupModal(props) {
         })
         return found
     };
-      
+
+
     useEffect(() => {
-        if (group.users){
-        changeAmountOfUsers(group.users.length)
-        setUserInGroup(checkIfUserInGroup())
+        if (group.users) {
+            changeAmountOfUsers(group.users.length)
+            setUserInGroup(checkIfUserInGroup())
         }
     }, [group])
-
-
 
 
     const handleJoinOrLeaveButton = (event) => {
         const path = event.target.name === 'join' ? 'join' : 'leave'
         axios.put('http://localhost:5000/group/' + path, {
-          user_id: props.loggedInID,
-          group_id: props.GroupId.$oid,
+            user_id: props.loggedInID,
+            group_id: props.GroupId.$oid,
         }).then((response) => {
-          if (response.data.result == true) {
-            console.log('true')
-            setAction(!action)
-          }
-          else {
-            console.log('false')
-          }
-    
+            const toJoin = path === 'join'
+            let trans = false
+            setCircularProgShow(true)
+            trans = joinHandler(props.GroupId.$oid, toJoin)
+            trans.then(() => {
+                if (response.data.result == true) {
+                    console.log('true')
+                    setAction(!action)
+                }
+                else {
+                    console.log('false')
+                }
+            })
+                .catch((error) => {
+                    console.log(error);
+                });
         })
-          .catch((error) => {
-            console.log(error);
-          });
-    
-      }
-    
-    
+
+    }
+
+    const joinHandler = async (groupID, toJoin) => {
+        console.log(groupID)
+        console.log(toJoin)
+        let signer = await props.provider.getSigner();
+        let contract = new ethers.Contract(
+            contractAddress,
+            SmartContractABI,
+            signer
+        );
+        if (toJoin) {
+            const tx = await contract.buyItems(groupID);
+            await tx.wait();
+            console.log(tx)
+
+        }
+        else {
+            const tx = await contract.refund(groupID);
+            await tx.wait();
+            console.log(tx)
+        }
+        return true
+    }
+
 
     return (
         <Grid container spacing={0.2}>
@@ -113,7 +146,7 @@ export default function GroupModal(props) {
                             </Grid>
                             <Grid item>
                                 <Typography gutterBottom variant="h6" component="div">
-                                    ${group.price}
+                                    ₪{group.price}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -133,6 +166,9 @@ export default function GroupModal(props) {
                             ? <Button name="join" variant="contained" color="success" onClick={handleJoinOrLeaveButton}>Join Group</Button> //onClick={this.handleLogoutClick}
                             : <Button name="leave" variant="outlined" color="error" onClick={handleJoinOrLeaveButton}>Leave Group</Button>
                         }
+                        <Box sx={{ mt: 3, ml: 1, mb: 1 }}>
+                            {circularProgShow && <CircularProgress />}
+                        </Box>
                     </Box>
                 </Box>
             </Grid>

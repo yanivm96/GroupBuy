@@ -5,6 +5,9 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { Button } from '@mui/material';
+import SmartContractABI from "../SmartContractABI.json"
+import {contractAddress} from "../contractAddress.js"
+import { ethers } from 'ethers';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useFormik, Formik, Form, Field } from 'formik';
@@ -53,9 +56,12 @@ export default function AddressForm(props) {
       axios.post(url, JSON.stringify(values), axiosConfig)
         .then((res) => {
           if (res.data["itemCreated"] === true) {
-            const id = res.data['id']
-            navigate("/");
-            window.location.reload(false);
+            let trans = false
+            trans = createSmartContract(res.data['id'], values)
+            trans.then(() => {
+              navigate("/");
+              window.location.reload(false);
+            })
           }
           else {
             console.log("creation faild");
@@ -63,6 +69,22 @@ export default function AddressForm(props) {
         });
     }
   });
+
+
+  const createSmartContract = async (id, values) => {
+    const amount_of_people = parseInt(values['amount_of_people'], 10);
+    const price = parseInt(values['price'], 10) * 184529;
+    let signer = await props.provider.getSigner();
+    let contract = new ethers.Contract(
+      contractAddress,
+      SmartContractABI,
+      signer
+    );
+    let tx = null
+    const currentTimeEpochSeconds = Math.floor(new Date().getTime() / 1000) + (7 * 24 * 60 * 60);
+    tx = await contract.addProduct(id, price, amount_of_people, currentTimeEpochSeconds);
+    return true;
+  }
 
   return (
     <React.Fragment>

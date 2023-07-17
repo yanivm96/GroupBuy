@@ -44,6 +44,7 @@ export default function GroupCard(props) {
     props.setModal()
   };
 
+  const provider = props.provider
   const loggedInID = props.loggedInID
   const price = props.Group.price
   const itemName = props.Group.item_name
@@ -62,7 +63,6 @@ export default function GroupCard(props) {
       <Typography level="h2" fontSize="md" sx={{ mb: 0.5 }}>
         {itemName}
       </Typography>
-      <Typography level="body2">Amount of people: {amountOfPeople}</Typography>
       <div>
         {props.isLoggedIn && <LikeButton
           groupID={groupID}
@@ -105,7 +105,7 @@ export default function GroupCard(props) {
             aria-describedby="modal-modal-description"
           >
             <Box style={style}>
-              <GroupModal group={props.Group} GroupId={groupID} loggedInID={loggedInID}>
+              <GroupModal group={props.Group} GroupId={groupID} loggedInID={loggedInID} provider={provider}>
               </GroupModal>
             </Box>
           </Modal>

@@ -33,11 +33,11 @@ def create_group():
     data["amount_of_people"] = int(data["amount_of_people"])
     data["seller_id"] = ObjectId(data["seller_id"])
     group = groupbuy_db.Group.insert_one(request.get_json())
-    
+    group_id = str(group.inserted_id)
     if group:
         created=True
 
-    return {"itemCreated" :created} ,200
+    return {"itemCreated" :created, "id":group_id} ,200
 
 
 @group.route("/update_all_attributes", methods=['PUT'])
