@@ -10,6 +10,7 @@ import { Modal } from '@mui/material';
 import LikeButton from './LikeButton';
 import axios from 'axios';
 import GroupModal from './GroupModal';
+import { Grid } from '@mui/material';
 
 
 const style = {
@@ -63,12 +64,13 @@ export default function GroupCard(props) {
       <Typography level="h2" fontSize="md" sx={{ mb: 0.5 }}>
         {itemName}
       </Typography>
+      <Grid container justifyContent="flex-end" sx={{ pr: 2, pt: 2 }}>
       <div>
-        {props.isLoggedIn && <LikeButton
-          groupID={groupID}
-          loggedInID={props.loggedInID}>
-        </LikeButton>}
+        {props.isLoggedIn && (
+          <LikeButton groupID={groupID} loggedInID={props.loggedInID} />
+        )}
       </div>
+    </Grid>
       <AspectRatio minHeight="400px" maxHeight="300px" sx={{ my: 2 }}>
         <img
           src={image}
