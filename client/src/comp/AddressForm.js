@@ -72,8 +72,8 @@ export default function AddressForm(props) {
 
 
   const createSmartContract = async (id, values) => {
-    const amount_of_people = parseInt(values['amount_of_people'], 10);
-    const price = parseInt(values['price'], 10) * 184529;
+    const amount_of_people = parseInt(values['amount_of_people']);
+    const price = parseInt(values['price']);
     let signer = await props.provider.getSigner();
     let contract = new ethers.Contract(
       contractAddress,
@@ -81,8 +81,8 @@ export default function AddressForm(props) {
       signer
     );
     let tx = null
-    const currentTimeEpochSeconds = Math.floor(new Date().getTime() / 1000) + (7 * 24 * 60 * 60);
-    tx = await contract.addProduct(id, price, amount_of_people, currentTimeEpochSeconds);
+    //const currentTimeEpochSeconds = Math.floor(new Date().getTime() / 1000) + (7 * 24 * 60 * 60);
+    tx = await contract.addProduct(id, price, amount_of_people);
     return true;
   }
 

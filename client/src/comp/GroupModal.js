@@ -109,7 +109,7 @@ export default function GroupModal(props) {
             signer
         );
         if (toJoin) {
-            const tx = await contract.buyItems(groupID,1);
+            const tx = await contract.buyItems(groupID, {value: props.group.price});
             await tx.wait();
             console.log(tx)
 
