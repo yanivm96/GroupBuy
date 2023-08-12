@@ -32,13 +32,13 @@ def create_group():
     data["price"] = float(data["price"])
     data["amount_of_people"] = int(data["amount_of_people"])
     data["seller_id"] = ObjectId(data["seller_id"])
+    data['status'] = 'in_progress'
     group = groupbuy_db.Group.insert_one(request.get_json())
     group_id = str(group.inserted_id)
     if group:
         created=True
 
     return {"itemCreated" :created, "id":group_id} ,200
-
 
 @group.route("/update_all_attributes", methods=['PUT'])
 def update_group():
@@ -67,12 +67,14 @@ def update_group():
 
     return {"itemUpdated": True} , 200
 
-
 @group.route("/all", methods=['GET'])
 def get_all_groups():
-    groups = groupbuy_db.Group.find({})
+    only_in_progress = bool(request.args.get('in_progress'))
+    if only_in_progress:
+        groups = groupbuy_db.Group.find({"status": 'in_progress'})
+    else:
+        groups = groupbuy_db.Group.find({})
     json_groups = json_util.dumps(groups)
-
     return jsonify(json_groups), 200
 
 @group.route("/seller_groups", methods=['POST'])
@@ -197,6 +199,13 @@ def is_user_in_group(user_id,group_id):
 
     return inside
 
+def check_group_full(group_id):
+    group = groupbuy_db.Group.find_one({"_id": ObjectId(group_id)})
+    if len(group["users"]) == group["amount_of_people"]:
+        groupbuy_db.Group.update_one({"_id": ObjectId(group_id)},
+        {"$set": {"status": 'complete'}})
+
+
 @group.route("/leave", methods=['PUT'])
 def delete_from_users_list():
     data = request.get_json()
@@ -215,17 +224,20 @@ def delete_from_users_list():
 def insert_to_users_list():
     data = request.get_json()
     joined = True
+    complete = False
     try:
         if not is_user_in_group(data["user_id"],data["group_id"]):
             groupbuy_db.Group.update_one(
             {"_id": ObjectId(data["group_id"])},
             {"$push": {"users": ObjectId(data["user_id"])}})
+            if check_group_full(data["group_id"]):
+                complete = True
         else:
             raise Exception("User already in group")
     except Exception as e:
         joined = False
         print(e)
-    return {"result": joined}, 200
+    return {"result": joined, "complete": complete}, 200
 
 def update_amount_of_people(group_id,increas):
     if increas:
@@ -265,6 +277,10 @@ def define_group():
                 "image": {
                 "bsonType": "string",
                 "description": "image must be a string and is required"
+                },
+                "status": {
+                "bsonType": "string",
+                "description": "status must be a string and is required"
                 },
                 "users": {
                 "bsonType": "array",
