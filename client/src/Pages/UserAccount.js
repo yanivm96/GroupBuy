@@ -120,7 +120,19 @@ export default function Dashboard(props) {
       "group_id": event.$oid,
       "user_id": user_id
     }), axiosConfig)
-      .then(response => {
+      .then(async response => {
+
+        let signer = await props.provider.getSigner();
+        let contract = new ethers.Contract(
+            contractAddress,
+            SmartContractABI,
+            signer
+        );
+        
+        const tx = await contract.refund(event.$oid);
+        await tx.wait();
+        console.log(tx)
+
         if (update < 10) {
           setUpdate(update + 1)
         }
