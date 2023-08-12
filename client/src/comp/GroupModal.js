@@ -115,7 +115,7 @@ export default function GroupModal(props) {
 
         }
         else {
-            const tx = await contract.refund(groupID, {value: props.group.price});
+            const tx = await contract.refund(groupID);
             await tx.wait();
             console.log(tx)
         }
