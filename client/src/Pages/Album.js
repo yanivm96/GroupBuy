@@ -61,7 +61,8 @@ export default function Album(props) {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:5000/group/all')
+    axios.get('http://localhost:5000/group/all', 
+    {params: {in_progress: "True"}})
       .then(response => {
         setAllGroups(JSON.parse(response.data));
         setFilteredGroups(JSON.parse(response.data))
