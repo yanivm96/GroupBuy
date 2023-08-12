@@ -11,9 +11,9 @@ import Divider from '@mui/material/Divider';
 import axios from 'axios';
 import SmartContractABI from "../SmartContractABI.json"
 import { ethers } from 'ethers';
+import { contractAddress } from "../contractAddress.js"
 import { useState, useEffect } from 'react';
 import { getPaginationItemUtilityClass } from '@mui/material';
-import { contractAddress } from "../contractAddress.js"
 import CircularProgress from "./CircularProgress.js"
 
 
@@ -115,7 +115,7 @@ export default function GroupModal(props) {
 
         }
         else {
-            const tx = await contract.refund(groupID);
+            const tx = await contract.refund(groupID, {value: props.group.price});
             await tx.wait();
             console.log(tx)
         }
