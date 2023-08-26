@@ -140,9 +140,6 @@ export default function SignInSide() {
               </Alert>}
               <Grid container>
                 <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
                 </Grid>
                 <Grid item>
                   <Link href="http://127.0.0.1:3000/SignUp" variant="body2" >

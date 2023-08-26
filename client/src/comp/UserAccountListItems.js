@@ -41,12 +41,6 @@ const UserAccountListItems = (props) => {
         </ListItemIcon>
         <ListItemText primary="Account" />
       </ListItemButton>
-      <ListItemButton onClick={handleOrderClick}>
-        <ListItemIcon>
-          <ShoppingCartIcon />
-        </ListItemIcon>
-        <ListItemText primary="Orders" />
-      </ListItemButton>
       <ListItemButton onClick={handleLikeClick}>
         <ListItemIcon>
           <AssignmentIcon />
