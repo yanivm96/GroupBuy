@@ -25,7 +25,7 @@ import { contractAddress } from "../contractAddress.js"
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import { ethers } from "ethers"
 
 const drawerWidth = 240;
 
