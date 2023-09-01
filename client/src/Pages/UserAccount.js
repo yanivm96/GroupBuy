@@ -20,7 +20,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import UserAccountListItems from '../comp/UserAccountListItems'
 import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
-import SmartContractABI from SmartContractABI;
+import SmartContractABI from "../SmartContractABI.json"
 import { contractAddress } from "../contractAddress.js"
 import { useState } from 'react';
 import { useEffect } from 'react';
