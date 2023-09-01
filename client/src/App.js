@@ -45,10 +45,6 @@ function App() {
   const [provider, setProvider] = useState(null);
 
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
-  const https = require('https')
-  const agent = new https.Agent({
-    rejectUnauthorized: false,
-  })
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -62,7 +58,6 @@ function App() {
     try {
       await axios
         .get(apiUrl + "login", {
-          httpsAgent: agent,
           headers: {
             Authorization: `Bearer ${token}`,
           },
