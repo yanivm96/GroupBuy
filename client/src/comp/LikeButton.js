@@ -5,7 +5,7 @@ import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
+import {apiUrl} from '../url';
 
 
 axios.defaults.withCredentials = true;
@@ -22,6 +22,7 @@ export default function LikeButton(props) {
   const [likedButton, setLikedButton] = React.useState("")
   const loggedInID = props.loggedInID
   const groupID = props.groupID
+  
 
   const userInput = {
     userID: loggedInID,
@@ -29,7 +30,7 @@ export default function LikeButton(props) {
   };
   
   useEffect(() => {
-    axios.post("http://localhost:5000/group/like", JSON.stringify(userInput), axiosConfig)
+    axios.post(apiUrl + "group/like", JSON.stringify(userInput), axiosConfig)
       .then(response => {
         if (response.data["like"] === true) {
           setLikedButton("solid");
@@ -44,7 +45,7 @@ export default function LikeButton(props) {
 
 
   const handleLikeButton = (event) => {
-    axios.put('http://localhost:5000/group/manage_like', {
+    axios.put(apiUrl + 'group/manage_like', {
       userID: loggedInID,
       groupID: groupID.$oid,
     }).then((response) => {

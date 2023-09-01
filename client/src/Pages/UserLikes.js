@@ -23,7 +23,7 @@ import axios from 'axios';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
+import {apiUrl} from '../url';
 
 const drawerWidth = 240;
 
@@ -96,8 +96,9 @@ export default function Dashboard(props) {
 
     const [update, setUpdate] = useState(0);
 
+
     useEffect(() => {
-        axios.post('http://localhost:5000/group/liked_groups', JSON.stringify({ "id": user_id }), axiosConfig)
+        axios.post(apiUrl + 'group/liked_groups', JSON.stringify({ "id": user_id }), axiosConfig)
             .then(response => {
                 setAllGroups(JSON.parse(response.data));
             })
@@ -108,7 +109,7 @@ export default function Dashboard(props) {
 
 
     function handleLike(event) {
-        axios.put("http://localhost:5000/group/unlike", JSON.stringify({
+        axios.put(apiUrl + "group/unlike", JSON.stringify({
             "group_id": event.$oid,
             "id": user_id
         }), axiosConfig)

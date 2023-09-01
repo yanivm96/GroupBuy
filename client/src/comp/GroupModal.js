@@ -15,7 +15,7 @@ import { contractAddress } from "../contractAddress.js"
 import { useState, useEffect } from 'react';
 import { getPaginationItemUtilityClass } from '@mui/material';
 import CircularProgress from "./CircularProgress.js"
-
+import {apiUrl} from '../url';
 
 
 const Item = styled(Paper)(({ theme }) => ({
@@ -42,10 +42,10 @@ export default function GroupModal(props) {
     const [action, setAction] = useState(true)
     const [amountOfUsers, changeAmountOfUsers] = useState(0)
     const [circularProgShow, setCircularProgShow] = useState(false)
-
+    
     useEffect(() => {
         setCircularProgShow(false)
-        axios.get('http://localhost:5000/group/get', { params: { 'group_id': props.GroupId.$oid } })
+        axios.get(apiUrl + 'group/get', { params: { 'group_id': props.GroupId.$oid } })
             .then(response => {
                 console.log('useeffect')
                 console.log(JSON.parse(response.data))
@@ -75,7 +75,7 @@ export default function GroupModal(props) {
 
     const handleJoinOrLeaveButton = (event) => {
         const path = event.target.name === 'join' ? 'join' : 'leave'
-        axios.put('http://localhost:5000/group/' + path, {
+        axios.put(apiUrl + 'group/' + path, {
             user_id: props.loggedInID,
             group_id: props.GroupId.$oid,
         }).then((response) => {

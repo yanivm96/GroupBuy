@@ -26,6 +26,7 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { ethers } from "ethers"
+import {apiUrl} from '../url';
 
 const drawerWidth = 240;
 
@@ -98,8 +99,9 @@ export default function Dashboard(props) {
   const [update, setUpdate] = useState(0);
 
 
+
   useEffect(() => {
-    axios.post('http://localhost:5000/group/user_groups', JSON.stringify({ "user_id": user_id }), axiosConfig)
+    axios.post(apiUrl + 'group/user_groups', JSON.stringify({ "user_id": user_id }), axiosConfig)
       .then(response => {
         setAllGroups(JSON.parse(response.data));
       })
@@ -107,7 +109,7 @@ export default function Dashboard(props) {
         console.log(error);
       });
 
-    axios.post('http://localhost:5000/user/details', JSON.stringify({ "user_id": user_id }), axiosConfig)
+    axios.post(apiUrl + 'user/details', JSON.stringify({ "user_id": user_id }), axiosConfig)
       .then(response => {
         setuserDetails(JSON.parse(response.data));
       })
@@ -118,7 +120,7 @@ export default function Dashboard(props) {
 
 
   function handleDelete(event) {
-    axios.put("http://localhost:5000/group/leave", JSON.stringify({
+    axios.put(apiUrl+ "group/leave", JSON.stringify({
       "group_id": event.$oid,
       "user_id": user_id
     }), axiosConfig)
@@ -126,11 +128,11 @@ export default function Dashboard(props) {
 
         let signer = await props.provider.getSigner();
         let contract = new ethers.Contract(
-            contractAddress,
-            SmartContractABI,
-            signer
+          contractAddress,
+          SmartContractABI,
+          signer
         );
-        
+
         const tx = await contract.refund(event.$oid);
         await tx.wait();
         console.log(tx)
@@ -167,7 +169,7 @@ export default function Dashboard(props) {
           </Toolbar>
           <Divider />
           <List component="nav">
-            <UserAccountListItems user_id={user_id}/>
+            <UserAccountListItems user_id={user_id} />
             <Divider sx={{ my: 1 }} />
           </List>
         </Drawer>

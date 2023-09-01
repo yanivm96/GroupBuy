@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik, Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import Box from '@mui/material/Box';
-
+import {apiUrl} from '../url'
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -51,7 +51,7 @@ export default function AddressForm(props) {
     },
     validationSchema: validationSchema,
     onSubmit: async (values, { setSubmitting, setFieldError }) => {
-      let url = "http://127.0.0.1:5000/group/create";
+      let url = apiUrl + "group/create";
       console.log(values)
       axios.post(url, JSON.stringify(values), axiosConfig)
         .then((res) => {

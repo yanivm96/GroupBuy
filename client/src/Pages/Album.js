@@ -10,6 +10,7 @@ import axios from 'axios';
 import { useState,useEffect } from 'react';
 import GroupCard from '../comp/GroupCard';
 import Search from '../comp/Search';
+import {apiUrl} from '../url';
 
 function Copyright() {
   return (
@@ -47,6 +48,8 @@ export default function Album(props) {
   const loggedInID = props.loggedInID;
   const isSeller = props.isSeller;
 
+  console.log(apiUrl)
+
   function handleGroupsFilter(newValue) {
     if (newValue === "") {
       setFilteredGroups(allGroups)
@@ -61,7 +64,7 @@ export default function Album(props) {
   }
 
   useEffect(() => {
-    axios.get('http://localhost:5000/group/all', 
+    axios.get(apiUrl + 'group/all', 
     {params: {in_progress: "True"}})
       .then(response => {
         setAllGroups(JSON.parse(response.data));

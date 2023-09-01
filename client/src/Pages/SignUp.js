@@ -21,7 +21,7 @@ import Stack from '@mui/material/Stack';
 import AntSwitch from './AntSwitch';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-
+import { apiUrl } from '../url'
 
 function Copyright(props) {
 
@@ -73,19 +73,17 @@ export default function SignUp() {
     const [emailError, setEmailError] = useState(false);
 
     async function checkusernameExistence(username) {
-        let userUrl = "http://127.0.0.1:5000/user/check_username_existence";
-        let sellerUrl = "http://127.0.0.1:5000/seller/check_username_existence";
+        let userUrl = apiUrl + "user/check_username_existence";
+        let sellerUrl = apiUrl + "seller/check_username_existence";
 
         try {
             const userRes = await axios.post(userUrl, JSON.stringify({ "username": username }), axiosConfig);
             const sellerRes = await axios.post(sellerUrl, JSON.stringify({ "username": username }), axiosConfig);
             if (userRes.data["exist"] === false && sellerRes.data["exist"] === false) {
-                if(checked)
-                {
+                if (checked) {
                     localStorage.setItem("token", sellerRes.data.accessToken);
                 }
-                else
-                {
+                else {
                     localStorage.setItem("token", userRes.data.accessToken);
                 }
                 setUsernameError(false)
@@ -100,19 +98,17 @@ export default function SignUp() {
     }
 
     async function checkEmailExistence(email) {
-        let userurl = "http://127.0.0.1:5000/user/check_email_existence";
-        let sellerUrl = "http://127.0.0.1:5000/seller/check_email_existence";
-        
+        let userurl = apiUrl + "user/check_email_existence";
+        let sellerUrl = apiUrl + "seller/check_email_existence";
+
         try {
             const userRes = await axios.post(userurl, JSON.stringify({ "email": email }), axiosConfig);
             const sellerRes = await axios.post(sellerUrl, JSON.stringify({ "email": email }), axiosConfig);
             if (userRes.data["exist"] === false && sellerRes.data["exist"] === false) {
-                if(checked)
-                {
+                if (checked) {
                     localStorage.setItem("token", sellerRes.data.token);
                 }
-                else
-                {
+                else {
                     localStorage.setItem("token", userRes.data.token);
                 }
                 setEmailError(false)
@@ -142,9 +138,9 @@ export default function SignUp() {
             console.log(emailExist, usernameExist)
             if (!emailExist && !usernameExist) {
                 if (checked === true) {
-                    url = "http://127.0.0.1:5000/seller/create";
+                    url = apiUrl + "seller/create";
                 } else {
-                    url = "http://127.0.0.1:5000/user/create";
+                    url = apiUrl + "user/create";
                 }
                 try {
                     const res = await axios.post(url, JSON.stringify(values), axiosConfig);

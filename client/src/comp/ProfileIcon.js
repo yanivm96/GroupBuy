@@ -15,7 +15,7 @@ import Logout from '@mui/icons-material/Logout';
 import { createSearchParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { string } from 'yup';
-
+import {apiUrl} from '../url'
 
 axios.defaults.withCredentials = true;
 let axiosConfig = {
@@ -56,7 +56,7 @@ export default function ProfileIcon(props) {
 
   const handleLogout = () => {
     setAnchorEl(null);
-    let url = "http://127.0.0.1:5000/logout";
+    let url = apiUrl + "logout";
     axios.post(url, axiosConfig)
       .then((res) => {
         localStorage.clear();

@@ -12,7 +12,7 @@ import SellerAccount from "./Pages/SellerAccount"
 import SellerLikes from "./Pages/SellerLikes"
 import UserAccount from "./Pages/UserAccount"
 import UserLikes from "./Pages/UserLikes"
-
+import {apiUrl} from './url';
 
 const apiKey = '1730eff0-9d50-4382-a3fe-89f0d34a2070'
 const injected = injectedModule()
@@ -45,7 +45,7 @@ function App() {
   const [provider, setProvider] = useState(null);
 
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
-  
+
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -54,17 +54,17 @@ function App() {
       connect()
     } else return;
   }, [wallet]);
-
+  console.log(apiUrl)
   const checkLogin = async (token) => {
     try {
       await axios
-        .get("http://localhost:5000/login", {
+        .get(apiUrl+ "login", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
         .then((response) => {
-          
+
           if (wallet) {
             let ethersProvider = new ethers.providers.Web3Provider(wallet.provider, 'any')
             setProvider(ethersProvider)
@@ -88,7 +88,7 @@ function App() {
     <BrowserRouter>
       <Header isLoggedIn={isLoggedIn} isSeller={isSeller} loggedInID={loggedInID} provider={provider}> </Header>
       <Routes>
-        <Route path="/" element={<Album isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID} provider={provider}/>} />
+        <Route path="/" element={<Album isSeller={isSeller} isLoggedIn={isLoggedIn} loggedInID={loggedInID} provider={provider} />} />
         <Route path="/SignIn" element={<SignIn />} />
         <Route path="/SignUp" element={<SignUp />} />
         <Route path="/Seller" element={<SellerAccount />} />

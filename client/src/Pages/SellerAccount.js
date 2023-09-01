@@ -26,7 +26,7 @@ import { useLocation } from 'react-router-dom';
 import EditGroup from '../comp/EditGroupForm'
 import CreateGroupe from '../comp/CreateGroup';
 import { Button } from '@mui/material';
-
+import {apiUrl} from '../url';
 
 const drawerWidth = 240;
 
@@ -98,10 +98,11 @@ export default function Dashboard(props) {
   const [seller_id, setSellerID] = useState(location.state?.seller_id);
 
   const [update, setUpdate] = useState(0);
+  
 
 
   useEffect(() => {
-    axios.post('http://localhost:5000/group/seller_groups', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
+    axios.post(apiUrl + 'group/seller_groups', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
       .then(response => {
         setAllGroups(JSON.parse(response.data));
       })
@@ -109,7 +110,7 @@ export default function Dashboard(props) {
         console.log(error);
       });
 
-    axios.post('http://localhost:5000/seller/details', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
+    axios.post(apiUrl + 'seller/details', JSON.stringify({ "seller_id": seller_id }), axiosConfig)
       .then(response => {
         setsellerDetails(JSON.parse(response.data));
       })
@@ -121,7 +122,7 @@ export default function Dashboard(props) {
 
   function handleDelete(event) {
     console.log(event.$oid)
-    axios.post("http://localhost:5000/group/delete", JSON.stringify({ "group_id": event.$oid }), axiosConfig)
+    axios.post(apiUrl + "group/delete", JSON.stringify({ "group_id": event.$oid }), axiosConfig)
       .then(response => {
         if (update < 10) {
           setUpdate(update + 1)

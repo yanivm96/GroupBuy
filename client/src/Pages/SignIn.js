@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
-
+import {apiUrl} from '../url'
 function Copyright(props) {
 
   return (
@@ -47,7 +47,7 @@ export default function SignInSide() {
   const navigate = useNavigate();
   const handleSubmit = (event) => {
     event.preventDefault();
-    let url = "http://127.0.0.1:5000/login";
+    let url = apiUrl + "login";
     const data = new FormData(event.currentTarget);
     const userInput = {
       username: data.get('username'),
