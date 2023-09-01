@@ -12,7 +12,7 @@ import SellerAccount from "./Pages/SellerAccount"
 import SellerLikes from "./Pages/SellerLikes"
 import UserAccount from "./Pages/UserAccount"
 import UserLikes from "./Pages/UserLikes"
-import {apiUrl} from './url';
+import { apiUrl } from './url';
 
 const apiKey = '1730eff0-9d50-4382-a3fe-89f0d34a2070'
 const injected = injectedModule()
@@ -45,7 +45,10 @@ function App() {
   const [provider, setProvider] = useState(null);
 
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
-
+  const https = require('https')
+  const agent = new https.Agent({
+    rejectUnauthorized: false,
+  })
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -58,7 +61,8 @@ function App() {
   const checkLogin = async (token) => {
     try {
       await axios
-        .get(apiUrl+ "login", {
+        .get(apiUrl + "login", {
+          httpsAgent: agent,
           headers: {
             Authorization: `Bearer ${token}`,
           },
