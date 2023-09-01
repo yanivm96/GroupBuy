@@ -20,6 +20,8 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import UserAccountListItems from '../comp/UserAccountListItems'
 import ProductsList from '../comp/ProductsList'
 import axios from 'axios';
+import SmartContractABI from SmartContractABI;
+import { contractAddress } from "../contractAddress.js"
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
